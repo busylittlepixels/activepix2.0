@@ -12,5 +12,7 @@ export class EventInstanceStack extends cdk.Stack {
     // const queue = new sqs.Queue(this, 'ApawsQueue', {
     //   visibilityTimeout: cdk.Duration.seconds(300)
     // });
+
+    
   }
 }
