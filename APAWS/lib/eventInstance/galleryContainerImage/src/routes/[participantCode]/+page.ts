@@ -17,7 +17,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
     const mediaData = await EventData.getImagesForParticipant(participantNumber, fetch);
 
     let galleryData:ThemedGalleryData = {
-        theme: ETheme.DARK,
+        theme: ETheme.Test,
         participantCode: participantNumber,
         media: mediaData
     };
