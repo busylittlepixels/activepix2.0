@@ -1,0 +1,107 @@
+import * as cdk from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { Construct } from 'constructs';
+
+interface LBPayloadCMSProps extends cdk.StackProps {
+  containerImage: string;
+  name: string;
+  tags?: { [key: string]: string };
+  vpc?: ec2.Vpc;
+  cluster?: ecs.Cluster;
+  bucketProps?: s3.BucketProps;
+  taskMemoryLimitMiB?: number;
+  taskCpuUnits?: number;
+  containerPort?: number;
+  desiredCount?: number;
+}
+
+export class LBPayloadCMS extends Construct {
+  public readonly bucket: s3.Bucket;
+  public readonly cluster: ecs.Cluster;
+  public readonly service: ecs.FargateService;
+  public readonly loadBalancer: elbv2.ApplicationLoadBalancer;
+
+  constructor(scope: Construct, id: string, props: LBPayloadCMSProps) {
+    super(scope, id);
+
+    const {
+      vpc,
+      cluster,
+      bucketProps,
+      containerImage,
+      name,
+      tags,
+      taskMemoryLimitMiB = 512,
+      taskCpuUnits = 256,
+      containerPort = 3000,
+      desiredCount = 1,
+    } = props;
+
+    // Apply tags to all resources
+    if (tags) {
+      for (const [key, value] of Object.entries(tags)) {
+        cdk.Tags.of(this).add(key, value);
+      }
+    }
+
+    // S3 Bucket
+    this.bucket = new s3.Bucket(this, `${name}PayloadCMSBucket`, {
+      versioned: true,
+      ...bucketProps,
+    });
+
+    // VPC
+    const vpcInstance = vpc ?? new ec2.Vpc(this, `${name}PayloadCMSVpc`, { maxAzs: 2 });
+
+    // ECS Cluster
+    this.cluster = cluster ?? new ecs.Cluster(this, `${name}PayloadCMSCluster`, { vpc: vpcInstance });
+
+    // Task Definition
+    const taskDefinition = new ecs.FargateTaskDefinition(this, `${name}PayloadCMSTaskDef`);
+    const container = taskDefinition.addContainer(`${name}PayloadCMSContainer`, {
+      image: ecs.ContainerImage.fromRegistry(containerImage),
+      memoryLimitMiB: taskMemoryLimitMiB,
+      cpu: taskCpuUnits,
+      environment: {
+        MONGO_URI: '<MONGODB_CONNECTION_STRING>', // Replace with actual secret handling
+        S3_BUCKET: this.bucket.bucketName,
+      },
+    });
+
+    container.addPortMappings({
+      containerPort: containerPort,
+    });
+
+    // Fargate Service
+    this.service = new ecs.FargateService(this, `${name}PayloadCMSService`, {
+      cluster: this.cluster,
+      taskDefinition: taskDefinition,
+      desiredCount: desiredCount,
+    });
+
+    // Load Balancer
+    this.loadBalancer = new elbv2.ApplicationLoadBalancer(this, `${name}PayloadCMSLB`, {
+      vpc: vpcInstance,
+      internetFacing: true,
+    });
+
+    const listener = this.loadBalancer.addListener(`${name}PublicListener`, {
+      port: 80,
+      open: true,
+    });
+
+    listener.addTargets(`${name}ECS`, {
+      port: 80,
+      targets: [this.service],
+      healthCheck: {
+        path: "/",
+      },
+    });
+
+    // Grant permissions
+    this.bucket.grantReadWrite(this.service.taskDefinition.taskRole);
+  }
+}
