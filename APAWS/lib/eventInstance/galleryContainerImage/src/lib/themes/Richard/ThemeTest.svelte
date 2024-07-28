@@ -4,13 +4,16 @@
     export let galleryData:ThemedGalleryData;
 
 </script>
-<div class="flex flex-row">
-    <div class="flex flex-col InfoBox ">
+<div class="flex flex-row h-full">
+    <div class="flex flex-col InfoBox gap-3">
         <div class="textBox">
             <a>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugit, vero incidunt blanditiis perferendis repudiandae corporis quaerat odit aliquam tempore temporibus omnis hic tenetur illum consectetur tempora dolores autem accusamus minus.</a>
             <a>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam magni minima aliquid quis optio veritatis neque fugit quas numquam! Magni aliquam provident nesciunt. Reiciendis deleniti, non minima a incidunt unde?</a>
             <a>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod explicabo molestias alias ut debitis, dolores sapiente commodi cum facilis officia quaerat a, voluptatem consequuntur, ab eos quidem ipsam numquam corporis?</a>
         </div>  
+        <div class="placeHolder">
+            <a>MAP WITH ROUTE INCLUDED</a>
+        </div>
     </div>
 
     <div class="flex picture-boxes">
@@ -48,9 +51,13 @@
         width: 400px;
         flex-shrink: 0;
         background: rgba(25, 30, 36, 1);
+        margin: 1rem;
+        border-radius: 5px
     }
 
     .textBox {
         padding: 1rem;
     }
+    
+
 </style>

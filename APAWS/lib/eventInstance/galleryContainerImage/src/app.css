@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 
 
-Html,body {
+html,body {
     min-height: 100%;
 }
 
