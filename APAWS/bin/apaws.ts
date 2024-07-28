@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { ApawsStack } from '../lib/apaws-stack';
+import { EventInstanceStack } from '../lib/eventInstance-stack';
+import { ServiceAdminStack, ServiceAdminStackProps } from '../lib/serviceAdmin-stack';
+import { Service } from 'aws-cdk-lib/aws-servicediscovery';
 
 const app = new cdk.App();
-new ApawsStack(app, 'ApawsStack', {
+new EventInstanceStack(app, 'ApawsStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -19,3 +21,8 @@ new ApawsStack(app, 'ApawsStack', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+
+const serviceAdminProps:ServiceAdminStackProps = {
+
+}
+new ServiceAdminStack(app, 'APAWS_SERVICE_ADMIN', serviceAdminProps);

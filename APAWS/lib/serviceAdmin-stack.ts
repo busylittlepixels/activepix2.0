@@ -2,7 +2,10 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
-export class ApawsStack extends cdk.Stack {
+export interface ServiceAdminStackProps extends cdk.StackProps {
+
+}
+export class ServiceAdminStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
