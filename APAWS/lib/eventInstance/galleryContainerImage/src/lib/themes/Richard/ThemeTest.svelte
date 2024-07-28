@@ -10,8 +10,8 @@
         <div class="logo mt-3">
             
         </div>
-        <div class="textBox flex flex-col gap-4">
-            <div class="mb-3">
+        <div class="textBox flex flex-col gap-6">
+            <div class="mb-2">
                 <a class="text-4xl">Race title</a>
             </div>
             <div class="flex flex-col gap-1">
@@ -24,7 +24,7 @@
             </div>
             <div class="flex flex-col gap-1">
                 <a class="text-xl">Completion time:</a>
-                <a class="text-l">4 hours and 12 mins</a>
+                <a class="text-l">4 hours and 11 mins</a>
             </div>
             <div class="flex flex-col gap-1">
                 <a class="text-xl">Race information:</a>
@@ -38,9 +38,11 @@
     </div>
 
     <div class="flex flex-col main-section">
-        <div class="hero mb-7">
-            <div class="tint">
-                <a class="text-6x1">RACE NAME</a>
+        <div class="hero-wrapper">
+            <div class="hero mb-7">
+                <div class="tint">
+                    <a class="text-6x1">RACE NAME</a>
+                </div>
             </div>
         </div>
         <div class="flex picture-boxes scrolleyBox">
@@ -48,7 +50,7 @@
                 <div class="gallery-container">
                     {#each galleryData.media as media}
                         <div class="gallery-image">
-                            <img src={media.thumbnail} alt={media.ingress} />
+                            <img class="rounded" src={media.thumbnail} alt={media.ingress} />
                         </div>
                     {/each}
                 </div>
@@ -70,22 +72,26 @@
         background: rgba(25, 30, 36, 1);
         z-index: -2;
         position: fixed;
-      z-index: -1;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
+        z-index: -1;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
     }
     .gallery-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
         background-color: transparent;
         width: 100%;
+        
+        
     }
 
     .gallery-image {
         flex: 1 1 300px;
+        border-radius: 10px;
+        padding: 15px;
+        
     }
 
     .InfoBox {
@@ -98,7 +104,7 @@
 
     .textBox {
         padding: 1rem;
-        background: #00aeef;
+        background: #00afef79;
         font-size: large;
         border-radius: 6px;
         color: white;
@@ -157,8 +163,11 @@
     border-radius: 8px;
     color: white;
     position: relative;
-    
     font-size: 5rem;
+  }
+  .hero-wrapper {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 
   .main-section {
@@ -174,5 +183,17 @@
     left: 0;
     bottom: 0;
     right: 0;
+  }
+
+  .rounded {
+    border-radius: 5px;
+    box-shadow: 0px 0px 20px 0px rgba(22, 14, 14, 0.486);
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth transition using cubic-bezier */
+  }
+
+  .rounded:hover {
+    transform: scale(101%);
+    cursor: pointer;
+    opacity: 0.8;
   }
 </style>
