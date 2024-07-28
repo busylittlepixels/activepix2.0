@@ -3,13 +3,25 @@
 
     export let galleryData:ThemedGalleryData;
 
+    // import * as ModalManager from "$lib/ModalManager";
+
+    // const mapView = () => {
+    //     ModalManager.openModal(ModalManager.ModalTypes.RouteView, {});
+    // };
+
 </script>
+<!-- Background code -->
 <div class="background w-full h-full"></div>
-<div class="flex flex-row h-full">
+<div class="stripe">
+    <svg width="1920" height="865" viewBox="0 0 1920 865" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M-444.562 545.629C-659.298 971.212 -444.562 1260 -444.562 1260C-444.562 1260 976.861 -41.6196 2435.94 67.5393C3895.03 176.698 692.855 -379.299 -444.562 545.629Z" fill="#D9D9D9" fill-opacity="0.15"/>
+        </svg>
+</div>    
+
+<div class="flex flex-row h-full pageWrapper">
+    <!-- Left info bar -->
     <div class="flex flex-col InfoBox gap-3">
-        <div class="logo mt-3">
-            
-        </div>
+        <div class="logo mt-3"></div>
         <div class="textBox flex flex-col gap-6">
             <div class="mb-2">
                 <a class="text-4xl">Race title</a>
@@ -17,6 +29,10 @@
             <div class="flex flex-col gap-1">
                 <a class="text-xl">Particapant name:</a>
                 <a class="text-l">Joe blogs</a>
+            </div>
+            <div class="flex flex-col gap-1">
+                <a class="text-xl">Participant number:</a>
+                <a class="text-l">#125</a>
             </div>
             <div class="flex flex-col gap-1">
                 <a class="text-xl">Race length:</a>
@@ -31,20 +47,21 @@
                 <a class="text-l">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid cumque vel itaque maiores fuga doloribus excepturi perspiciatis, velit voluptate ut earum at iste quas hic eius! Velit fugiat minus similique.</a>
             </div>
         </div>  
-        <div class="placeHolder flex flex-col">
+        <div class="placeHolder rounded map-fx flex flex-col">
             <a>MAP WITH ROUTE INCLUDED </a>
             <a>could be a pop out model and bonus points if you could have just random pictures of around the route if ya have geo-tags or sumt</a>
         </div>
     </div>
-
+    <!-- Central hedder with race name -->
     <div class="flex flex-col main-section">
         <div class="hero-wrapper">
             <div class="hero mb-7">
-                <div class="tint">
+                <div class="tint flex items-center justify-center">
                     <a class="text-6x1">RACE NAME</a>
                 </div>
             </div>
         </div>
+        <!-- Picture gallery with scroll function -->
         <div class="flex picture-boxes scrolleyBox">
                 {#if (galleryData?.media?.length > 0)}
                 <div class="gallery-container">
@@ -61,13 +78,14 @@
     </div>
 </div>
 
-<div class="stripe">
-    <svg width="1920" height="865" viewBox="0 0 1920 865" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M-444.562 545.629C-659.298 971.212 -444.562 1260 -444.562 1260C-444.562 1260 976.861 -41.6196 2435.94 67.5393C3895.03 176.698 692.855 -379.299 -444.562 545.629Z" fill="#D9D9D9" fill-opacity="0.15"/>
-        </svg>
-</div>    
-
 <style>
+    .pageWrapper {
+        max-width: 1450px;
+        width: 90%;
+        margin: center;
+    }
+
+
     .background {
         background: rgba(25, 30, 36, 1);
         z-index: -2;
@@ -97,18 +115,21 @@
     .InfoBox {
         width: 400px;
         flex-shrink: 0;
-        margin: 1rem;
-        border-radius: 5px
+        /* margin: 1rem; */
         
     }
 
     .textBox {
-        padding: 1rem;
+        padding-left: 1rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
         background: #00afef79;
         font-size: large;
         border-radius: 6px;
         color: white;
         margin-top: 1rem;
+        border-radius: 5px;
+        box-shadow: 0px 0px 20px 0px rgba(22, 14, 14, 0.486);
 
     }
     
@@ -170,10 +191,10 @@
     padding-right: 15px;
   }
 
-  .main-section {
+  /* .main-section {
     margin-left: 50px;
-    margin-right: 50px;
-  }
+    margin-right: 60px;
+  } */
 
   .tint {
     background-color: rgba(0, 0, 0, 0.712);
@@ -192,6 +213,12 @@
   }
 
   .rounded:hover {
+    transform: scale(101%);
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  .map-fx:hover {
     transform: scale(101%);
     cursor: pointer;
     opacity: 0.8;

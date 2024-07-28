@@ -3,6 +3,7 @@
 
 import { get } from "svelte/store";
 import ExampleModal from "./modals/ExampleModal.svelte";
+import RouteView from "./RouteView.svelte";
 
 import { ActiveModalStore } from "./Stores";
 
@@ -10,12 +11,14 @@ import { ActiveModalStore } from "./Stores";
 //Add modal types here
 export enum ModalTypes {
     ExampleModal,
+    RouteView
 
 }
 
 //Add mapping to svelte components here
 export const ModalTypeMapping = {
     [ModalTypes.ExampleModal]: ExampleModal,
+    [ModalTypes.RouteView]: RouteView,
 
 }
 
