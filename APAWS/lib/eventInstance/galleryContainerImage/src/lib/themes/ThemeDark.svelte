@@ -24,6 +24,7 @@
         gap: 1rem;
         background-color: black;
         width: 100%;
+        height: 100%;
     }
 
     .gallery-image {

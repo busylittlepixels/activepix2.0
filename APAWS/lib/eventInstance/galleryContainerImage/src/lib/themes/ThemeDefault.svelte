@@ -16,3 +16,18 @@
 {:else}
     <p>Gallery media not found</p>
 {/if}
+
+<style>
+    .gallery-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background-color: black;
+        width: 100%;
+        height: 100%;
+    }
+
+    .gallery-image {
+        flex: 1 1 200px;
+    }
+</style>
