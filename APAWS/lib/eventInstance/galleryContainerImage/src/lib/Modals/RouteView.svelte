@@ -1,8 +1,7 @@
 <script lang="ts">
 
-    import ModalWrapper from "../../main/ModalWrapper.svelte";
+    import ModalWrapper from "./utils/ModalWrapper.svelte";
     import * as ModalManager from "$lib/ModalManager";
-    import { AuthStore } from "$lib/Stores";
 
     export let id:number;
     export let type:ModalManager.ModalTypes

@@ -1,8 +1,7 @@
 <script lang="ts">
 
-    import ModalWrapper from "../../main/ModalWrapper.svelte";
+    import ModalWrapper from "./utils/ModalWrapper.svelte";
     import * as ModalManager from "$lib/ModalManager";
-    import { AuthStore } from "$lib/Stores";
 
     export let id:number;
     export let type:ModalManager.ModalTypes
@@ -16,12 +15,8 @@
     }
 </script>
 <ModalWrapper onBackgroundClick={closeThisModal}>
-    <h1>Example Modal {$AuthStore?.user.id}</h1>
+    <h1>Example Modal</h1>
     <pre>{JSON.stringify(data, null, 2)}</pre>
-    <pre>USERDATA: {JSON.stringify($AuthStore?.user, null, 2)}</pre>
-    <button on:click={()=>{
-        ModalManager.openModal(ModalManager.ModalTypes.StudentClassesViewClassDetails, {someData: "some more data"})}
-    }>Open Example Modal</button>
 </ModalWrapper>
 
 <style lang="postcss">

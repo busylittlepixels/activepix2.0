@@ -3,6 +3,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as docdb from 'aws-cdk-lib/aws-docdb';
 import { Construct } from 'constructs';
 
 interface LBPayloadCMSProps extends cdk.StackProps {
@@ -52,6 +53,9 @@ export class LBPayloadCMS extends Construct {
       versioned: true,
       ...bucketProps,
     });
+    // DocumentDB to replace MongoDB
+    // const documentDB = new docdb.DatabaseCluster(this, 'DocumentDB', {
+        
 
     // VPC
     const vpcInstance = vpc ?? new ec2.Vpc(this, `${name}PayloadCMSVpc`, { maxAzs: 2 });

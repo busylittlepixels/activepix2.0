@@ -1,12 +1,22 @@
 
 
 
-import { get } from "svelte/store";
+import { get, writable, type Writable } from "svelte/store";
 import ExampleModal from "./modals/ExampleModal.svelte";
-import RouteView from "./RouteView.svelte";
+import RouteView from "./modals/RouteView.svelte";
 
-import { ActiveModalStore } from "./Stores";
+export type ActiveModal = {
+    id: number;
+    type: ModalTypes;
+    data: {
+        [key: string]: any;
+    };
+}
 
+
+export const ActiveModalStore:Writable<{
+    [key: string]: ActiveModal;
+}> = writable({});
 
 //Add modal types here
 export enum ModalTypes {
