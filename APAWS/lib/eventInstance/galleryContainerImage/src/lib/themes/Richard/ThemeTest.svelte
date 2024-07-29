@@ -3,11 +3,11 @@
 
     export let galleryData:ThemedGalleryData;
 
-    // import * as ModalManager from "$lib/ModalManager";
+    import * as ModalManager from "$lib/ModalManager";
 
-    // const mapView = () => {
-    //     ModalManager.openModal(ModalManager.ModalTypes.RouteView, {});
-    // };
+    const mapView = () => {
+        ModalManager.openModal(ModalManager.ModalTypes.RouteView, {});
+    };
 
 </script>
 <!-- Background code -->
@@ -57,7 +57,7 @@
         <div class="hero-wrapper">
             <div class="hero mb-7">
                 <div class="tint flex items-center justify-center">
-                    <a class="text-6x1">RACE NAME</a>
+                    <a class="hero-title">RACE NAME</a>
                 </div>
             </div>
         </div>
@@ -79,10 +79,11 @@
 </div>
 
 <style>
+
     .pageWrapper {
         max-width: 1450px;
         width: 90%;
-        margin: center;
+        margin: auto;
     }
 
 
@@ -101,14 +102,13 @@
         flex-wrap: wrap;
         background-color: transparent;
         width: 100%;
-        
-        
     }
 
     .gallery-image {
         flex: 1 1 300px;
         border-radius: 10px;
         padding: 15px;
+        object-fit: cover;
         
     }
 
@@ -223,4 +223,37 @@
     cursor: pointer;
     opacity: 0.8;
   }
+
+  .hero-title {
+    font-size: 5rem;
+  }
+
+  @media screen and (max-width:950px) {
+    .pageWrapper {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .InfoBox  {
+        width: 95%;
+        margin: 2.5%
+    }
+
+    .hero-title {
+    font-size: 3rem;
+  }
+
+    .scrolleyBox {
+        overflow-y: auto;
+            height: auto;
+    }
+
+    .gallery-image {
+            flex: auto;
+            border-radius: 10px;
+            padding: 15px;
+            object-fit: cover;
+            width: 50%;
+        }
+    }
 </style>
