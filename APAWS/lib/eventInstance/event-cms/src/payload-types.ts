@@ -10,6 +10,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    participantdata: Participantdatum;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -54,6 +55,25 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "participantdata".
+ */
+export interface Participantdatum {
+  id: string;
+  participantCode: string;
+  additionalData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
@@ -92,6 +112,7 @@ export interface PayloadMigration {
  */
 export interface Galleryconfig {
   id: string;
+  title?: string | null;
   logo?: string | Media | null;
   overlayImage?: string | Media | null;
   updatedAt?: string | null;

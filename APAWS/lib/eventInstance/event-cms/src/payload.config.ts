@@ -9,6 +9,7 @@ import { buildConfig } from 'payload/config'
 import Users from './collections/Users'
 import GalleryConfiguration from './globals/GalleryConfiguration'
 import Media from './collections/Media'
+import ParticipantData from './collections/ParticipantData'
 
 export default buildConfig({
   admin: {
@@ -18,7 +19,8 @@ export default buildConfig({
   editor: slateEditor({}),
   collections: [
     Users,
-    Media
+    Media,
+    ParticipantData,
   ],
   globals: [
     GalleryConfiguration,
