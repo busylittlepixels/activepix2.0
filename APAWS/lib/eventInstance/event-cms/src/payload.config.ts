@@ -7,6 +7,8 @@ import { slateEditor } from '@payloadcms/richtext-slate'
 import { buildConfig } from 'payload/config'
 
 import Users from './collections/Users'
+import GalleryConfiguration from './globals/GalleryConfiguration'
+import Media from './collections/Media'
 
 export default buildConfig({
   admin: {
@@ -14,7 +16,13 @@ export default buildConfig({
     bundler: webpackBundler(),
   },
   editor: slateEditor({}),
-  collections: [Users],
+  collections: [
+    Users,
+    Media
+  ],
+  globals: [
+    GalleryConfiguration,
+  ],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
@@ -24,5 +32,18 @@ export default buildConfig({
   plugins: [payloadCloud()],
   db: mongooseAdapter({
     url: process.env.DATABASE_URI,
+    
+    connectOptions: {
+      useFacet: false,
+    },
   }),
+  endpoints: [
+    {
+      path: '/health',
+      method: 'get',
+      handler: (req, res) => {
+        res.status(200).send('OK')
+      },
+    },
+  ]
 })

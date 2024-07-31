@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deployInstance": "npm run build && cdk deploy APAWS-EI-TEST --profile=rrharry-aa -vv"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

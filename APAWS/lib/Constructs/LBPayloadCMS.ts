@@ -4,6 +4,7 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as docdb from 'aws-cdk-lib/aws-docdb';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 interface LBPayloadCMSProps extends cdk.StackProps {
@@ -35,9 +36,9 @@ export class LBPayloadCMS extends Construct {
       containerImage,
       name,
       tags,
-      taskMemoryLimitMiB = 512,
-      taskCpuUnits = 256,
-      containerPort = 3000,
+      taskMemoryLimitMiB = 2048,
+      taskCpuUnits = 1024,
+      containerPort = 80,
       desiredCount = 1,
     } = props;
 
@@ -50,12 +51,8 @@ export class LBPayloadCMS extends Construct {
 
     // S3 Bucket
     this.bucket = new s3.Bucket(this, `${name}PayloadCMSBucket`, {
-      versioned: true,
       ...bucketProps,
     });
-    // DocumentDB to replace MongoDB
-    // const documentDB = new docdb.DatabaseCluster(this, 'DocumentDB', {
-        
 
     // VPC
     const vpcInstance = vpc ?? new ec2.Vpc(this, `${name}PayloadCMSVpc`, { maxAzs: 2 });
@@ -63,15 +60,55 @@ export class LBPayloadCMS extends Construct {
     // ECS Cluster
     this.cluster = cluster ?? new ecs.Cluster(this, `${name}PayloadCMSCluster`, { vpc: vpcInstance });
 
+    const executionRole = new iam.Role(this, `${name}ExecutionRole`, {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchLogsFullAccess'),
+      ],
+    });
+
+    // DocumentDB to replace MongoDB
+    const dbUsername = 'ddbadmin';
+    const dbPassword = name + "dbadmin";
+
+    const documentDB = new docdb.DatabaseCluster(this, 'DocumentDB', {
+      vpc: vpcInstance,
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM),
+      masterUser: {
+        username: dbUsername,
+        password: new cdk.SecretValue(dbPassword),
+      },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // Security Group for ECS tasks
+    const ecsSecurityGroup = new ec2.SecurityGroup(this, 'EcsSecurityGroup', {
+      vpc: vpcInstance,
+      description: 'Allow ECS tasks to access DocumentDB',
+    });
+
+    // Allow ECS tasks to communicate with DocumentDB
+    documentDB.connections.allowDefaultPortFrom(ecsSecurityGroup, 'Allow ECS to DocumentDB');
+
     // Task Definition
-    const taskDefinition = new ecs.FargateTaskDefinition(this, `${name}PayloadCMSTaskDef`);
+    const taskDefinition = new ecs.FargateTaskDefinition(this, `${name}PayloadCMSTaskDef`, {
+      memoryLimitMiB: taskMemoryLimitMiB,
+      cpu: taskCpuUnits,
+      executionRole: executionRole,
+    });
+
+    const uri = 'mongodb://' + dbUsername + ':' + dbPassword + '@' + documentDB.clusterEndpoint.hostname + ':' + documentDB.clusterEndpoint.port + '/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&retryWrites=false';
+
     const container = taskDefinition.addContainer(`${name}PayloadCMSContainer`, {
       image: ecs.ContainerImage.fromRegistry(containerImage),
       memoryLimitMiB: taskMemoryLimitMiB,
       cpu: taskCpuUnits,
+      logging: new ecs.AwsLogDriver({ streamPrefix: name + 'PayloadCMSContainer' }),
       environment: {
-        MONGO_URI: '<MONGODB_CONNECTION_STRING>', // Replace with actual secret handling
+        DATABASE_URI: uri,
         S3_BUCKET: this.bucket.bucketName,
+        PAYLOAD_SECRET: name + "-b53006edc"
       },
     });
 
@@ -84,6 +121,9 @@ export class LBPayloadCMS extends Construct {
       cluster: this.cluster,
       taskDefinition: taskDefinition,
       desiredCount: desiredCount,
+      healthCheckGracePeriod: cdk.Duration.seconds(30),
+      assignPublicIp: true, // while debugging
+      securityGroups: [ecsSecurityGroup],
     });
 
     // Load Balancer
@@ -101,7 +141,12 @@ export class LBPayloadCMS extends Construct {
       port: 80,
       targets: [this.service],
       healthCheck: {
-        path: "/",
+        path: "/api/health",
+        interval: cdk.Duration.seconds(25),
+        timeout: cdk.Duration.seconds(20),
+        healthyThresholdCount: 2,
+        unhealthyThresholdCount: 2,
+        healthyHttpCodes: '200-399',
       },
     });
 

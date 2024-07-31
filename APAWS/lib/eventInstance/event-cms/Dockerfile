@@ -21,7 +21,8 @@ COPY yarn.lock ./
 RUN yarn install --production
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/build ./build
+COPY --from=builder /home/node/app/global-bundle.pem ./global-bundle.pem
 
-EXPOSE 3000
+EXPOSE 80
 
 CMD ["node", "dist/server.js"]

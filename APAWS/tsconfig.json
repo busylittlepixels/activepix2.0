@@ -26,6 +26,8 @@
   },
   "exclude": [
     "node_modules",
-    "cdk.out"
+    "cdk.out",
+    "lib/eventInstance/galleryContainerImage",
+    "lib/eventInstance/event-cms"
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "name": "lprocessmedia",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "extraInstall": "npm install --include=optional && npm run install-sharp",
+    "install-sharp": "npm install --cpu=x64 --os=linux --libc=musl sharp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.142",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1664.0",
+    "sharp": "^0.33.4"
+  }
+}
