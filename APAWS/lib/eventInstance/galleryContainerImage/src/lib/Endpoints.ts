@@ -1,7 +1,7 @@
 let galleryDataBaseUrl: string = 'https://tlpgy1dm41.execute-api.eu-west-1.amazonaws.com/prod';
 
 
-let cmsBaseURL: string = "localhost:80/api";
+let cmsBaseURL: string = "http://localhost:80/api";
 export const Endpoints = {
     galleryData: {
         baseUrl: galleryDataBaseUrl,

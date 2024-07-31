@@ -47,5 +47,6 @@ export default buildConfig({
         res.status(200).send('OK')
       },
     },
-  ]
+  ],
+  cors: '*'
 })

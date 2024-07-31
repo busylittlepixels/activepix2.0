@@ -1,9 +1,11 @@
 import * as qs from 'qs'
+import { Endpoints } from './Endpoints'
 
 export namespace CMSHelpers {
-    export async function getParticipantData (participantCode: string) : Promise<null | {
+    export async function getParticipantData (participantCode: string, altFetch?:any) : Promise<null | {
         [key: string]: any
     }> {
+        const fetcher = altFetch || fetch
         const query = {
             where: {
                 participantCode: {
@@ -12,7 +14,8 @@ export namespace CMSHelpers {
             }
         }
         let queryStr = qs.stringify(query)
-        let response = await fetch(`/api/participantdata?${queryStr}`)
+        console.log(Endpoints.cms.participantData.base + `?${queryStr}`)
+        let response = await fetcher(Endpoints.cms.participantData.base + `?${queryStr}`)
         if(response.status !== 200) {
             console.log('Error fetching participant data', response.status)
             return null

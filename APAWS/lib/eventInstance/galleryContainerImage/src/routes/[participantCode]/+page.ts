@@ -1,3 +1,4 @@
+import { CMSHelpers } from '$lib/CMSHelpers';
 import { EventData } from '$lib/EventData';
 import type { ThemedGalleryData } from '$lib/EventTypes';
 import { ETheme } from '$lib/Theme';
@@ -14,12 +15,18 @@ export const load: PageLoad = async ({ fetch, params }) => {
     }
 
     //Get gallery data from API
-    const mediaData = await EventData.getImagesForParticipant(participantNumber, fetch);
+    const mediaDataPromise = EventData.getImagesForParticipant(participantNumber, fetch);
+    //Get the participant data from CMS
+    const participantDataPromise = CMSHelpers.getParticipantData(participantNumber.toString(), fetch)
+    
+    //Wait for both promises to resolve
+    const [mediaData, participantData] = await Promise.all([mediaDataPromise, participantDataPromise]);
 
     let galleryData:ThemedGalleryData = {
         theme: ETheme.Test,
         participantCode: participantNumber,
-        media: mediaData
+        media: mediaData,
+        participantData: participantData?.docs[0]?.additionalData ?? null
     };
 
     return galleryData

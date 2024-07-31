@@ -10,4 +10,5 @@ export type ThemedGalleryData = {
     theme: ETheme,
     participantCode: number,
     media: MediaData[],
+    participantData: any,//| undefined,
 }

@@ -13,7 +13,8 @@
     environment: {
         MEDIA_BUCKET: MediaIngressBucket.bucketName,
         PROCESSED_BUCKET: ProcessedBucket.bucketName,
-        METADATA_TABLE: ProcessedImageMetadataTable.tableName
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName
+        PARTICIPANT_IMAGE_METADATA_TABLE: ParticipantMetadataTable.tableName
     },
  */
 
@@ -26,15 +27,15 @@ export const handler = async (event: S3Event) => {
     //Setup context
     const MEDIA_BUCKET = process.env.MEDIA_BUCKET;
     const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
-    const METADATA_TABLE = process.env.METADATA_TABLE;
+    const IMAGE_METADATA_TABLE = process.env.IMAGE_METADATA_TABLE;
     if (!MEDIA_BUCKET) {
         throw new Error('MEDIA_BUCKET environment variable not set');
     }
     if (!PROCESSED_BUCKET) {
         throw new Error('PROCESSED_BUCKET environment variable not set');
     }
-    if (!METADATA_TABLE) {
-        throw new Error('METADATA_TABLE environment variable not set');
+    if (!IMAGE_METADATA_TABLE) {
+        throw new Error('IMAGE_METADATA_TABLE environment variable not set');
     }
 
     const s3 = new AWS.S3();
@@ -56,7 +57,7 @@ export const handler = async (event: S3Event) => {
             ingressBucket: MEDIA_BUCKET,
             processedBucket: PROCESSED_BUCKET,
             ingressKey: key,
-            metadataTable: METADATA_TABLE,
+            metadataTable: IMAGE_METADATA_TABLE,
         });
 
         if (!attemptResult.success) {

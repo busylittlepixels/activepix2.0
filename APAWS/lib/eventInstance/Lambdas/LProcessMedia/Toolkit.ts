@@ -76,7 +76,7 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
     }))
 
     //Save metadata
-    console.log('Saving metadata');
+    console.log('Saving media metadata');
     let metadataItem = {
         ingressKey: ctx.ingressKey,
         participantCodes: await participantCodesPromise,
@@ -93,7 +93,32 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
             fullsizeKey: { S: metadataItem.fullsizeKey },
         }
     }).promise();
-    console.log('Metadata saved');
+
+    //Update participant data:
+    /*
+    PARTICIPANT DATA:
+    {
+        participantCode: number,
+        ingressKeys: string[], // A list of ingress keys that the participant has been detected in.
+    }
+    */
+    console.log('Updating participant data');
+    let participantCodes = metadataItem.participantCodes;
+    await Promise.all(participantCodes.map(async code => {
+        let participantData = await ctx.ddb.getItem({
+            TableName: ctx.metadataTable,
+            Key: { participantCode: { N: code.toString() } }
+        }).promise();
+        let ingressKeys = participantData?.Item?.ingressKeys as string[] || [] as string[];
+        ingressKeys.push(metadataItem.ingressKey);
+        await ctx.ddb.putItem({
+            TableName: ctx.metadataTable,
+            Item: {
+                participantCode: { N: code.toString() },
+                ingressKeys: { SS: ingressKeys },
+            }
+        }).promise();
+    }));
     
 
 

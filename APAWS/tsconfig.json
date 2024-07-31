@@ -28,6 +28,7 @@
     "node_modules",
     "cdk.out",
     "lib/eventInstance/galleryContainerImage",
+    "lib/eventInstance/eventAdminPanel",
     "lib/eventInstance/event-cms"
   ]
 }

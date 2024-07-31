@@ -20,13 +20,13 @@ export const handler = async (event: APIGatewayEvent) => {
     //Setup context
     const ddb = new AWS.DynamoDB()
     const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
-    const METADATA_TABLE = process.env.METADATA_TABLE;
+    const PARTICIPANT_METADATA_TABLE = process.env.PARTICIPANT_METADATA_TABLE;
     if (!PROCESSED_BUCKET) {
         throw new Error('PROCESSED_BUCKET environment variable not set');
     }
 
-    if (!METADATA_TABLE) {
-        throw new Error('METADATA_TABLE environment variable not set');
+    if (!PARTICIPANT_METADATA_TABLE) {
+        throw new Error('PARTICIPANT_METADATA_TABLE environment variable not set');
     }
 
     //Parse the body
@@ -62,7 +62,7 @@ export const handler = async (event: APIGatewayEvent) => {
     let queryResult;
     try {
         queryResult = await ddb.query({
-            TableName: METADATA_TABLE,
+            TableName: PARTICIPANT_METADATA_TABLE,
             KeyConditionExpression: 'participantCode = :participantCode',
             ExpressionAttributeValues: {
                 ':participantCode': { N: participantCode.toString() }

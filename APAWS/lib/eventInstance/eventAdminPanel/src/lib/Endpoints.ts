@@ -1,8 +1,7 @@
-import { base } from "$service-worker";
-
 let galleryDataBaseUrl: string = 'https://tlpgy1dm41.execute-api.eu-west-1.amazonaws.com/prod';
 
-let cmsBaseURL: string = "localhost:80/api";
+let cmsBaseURL: string = "http://localhost:80/api";
+let cmsFileBaseURL: string = "http://localhost:80";
 export const Endpoints = {
     galleryData: {
         baseUrl: galleryDataBaseUrl,
@@ -18,9 +17,10 @@ export const Endpoints = {
         },
         media: {
             base: cmsBaseURL + '/media',
+            fileBase: cmsFileBaseURL,
         },
         galleryConfig: {
-            base: cmsBaseURL + '/galleryconfig',
+            base: cmsBaseURL + '/globals/galleryconfig',
         },
         participantData: {
             base: cmsBaseURL + '/participantdata',

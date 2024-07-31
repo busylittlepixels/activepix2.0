@@ -45,6 +45,6 @@ export namespace SeedData {
     ]
 
     export const galleryConfigDefaults:Partial<Galleryconfig> = {
-        
+        title: 'Untitled Activepix Event'
     }
 }

@@ -2,6 +2,9 @@ import { CollectionConfig } from "payload/types";
 
 const ParticipantData:CollectionConfig = {
     slug: 'participantdata',
+    access: {
+        read: () => true,
+    },
     fields: [
         {
             name: 'participantCode',
