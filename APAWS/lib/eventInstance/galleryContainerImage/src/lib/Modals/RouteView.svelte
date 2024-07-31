@@ -15,17 +15,61 @@
     }
 </script>
 <ModalWrapper onBackgroundClick={closeThisModal}>
-    <div class="imageContainer">
-        <div class="routeImage"></div>
+    <div class="imageContainer flex flex-col">
+        
+        <div class="routeImage flex">
+            <img class="flex" src="/themes/Richards/temproute.png" alt="get fucked">
+        </div>
+
+        <div class="flex flex-col box">
+            <div class="flex flex-row justify-between items-center">
+                <p class="Headder">Route</p>
+                <button class="btn" on:click={closeThisModal}>Close</button>
+            </div>
+            <div class="flex flex-row justify-between items-center">
+                <p class="Subheadder">Location: Middlesborough</p>
+                <p class="Subheadder">Distance: 4.5miles</p>
+                <p class="Subheadder">Weather conditions: rain</p>
+                
+            </div>
+        </div>
+ 
     </div>
 </ModalWrapper>
 
 <style lang="postcss">
     .imageContainer {
-        background: rgba(25, 30, 36, 1);
+        border-radius: 7px;
+        overflow: hidden;
+        flex-shrink: 1;
     }
     
     .routeImage {
-        background-image: url(/temproute.png);
+        flex: auto;
+    }
+
+    .routeImage img {
+        height: auto;
+        width: 100%;
+        background-size: contain;
+    }
+
+    .Headder {
+        font-size: 2rem;
+    }
+
+    .Subheadder {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 1rem;
+        font-size: 2rem;
+    }
+    
+    .box {
+        background: #00afef;
+        color: white;
+        padding: 0.5rem;   
     }
 </style>

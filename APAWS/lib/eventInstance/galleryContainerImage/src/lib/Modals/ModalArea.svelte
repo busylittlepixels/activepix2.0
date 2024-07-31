@@ -1,7 +1,6 @@
 <script lang="ts">
     import { writable } from "svelte/store";
-    import { ActiveModalStore } from "$lib/Stores";
-    import { ModalTypeMapping } from "$lib/ModalManager";
+    import { ModalTypeMapping, ActiveModalStore } from "$lib/ModalManager";
 
 </script>
 

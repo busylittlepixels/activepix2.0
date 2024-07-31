@@ -43,8 +43,9 @@
     }
 
     .modal-inner {
-        @apply bg-slate-800;
-        padding: 1rem;
+        flex: 0;
+        background: rgb(255, 255, 255);
+        padding: 0.5rem;
         border-radius: 0.5rem;
         max-width: 95%;
         max-height: 95%;
