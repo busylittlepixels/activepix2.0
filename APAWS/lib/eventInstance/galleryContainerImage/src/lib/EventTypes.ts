@@ -3,7 +3,7 @@ import type { ETheme } from "./Theme"
 export type MediaData = {
     ingress: string,
     thumbnail: string,
-    fullsize: string,
+    large: string,
 }
 
 export type ThemedGalleryData = {

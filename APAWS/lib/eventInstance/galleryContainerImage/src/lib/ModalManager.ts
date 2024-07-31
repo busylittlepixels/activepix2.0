@@ -3,8 +3,8 @@
 
 import { get, writable, type Writable } from "svelte/store";
 import ExampleModal from "./modals/ExampleModal.svelte";
-import RouteView from "./modals/RouteView.svelte";
-import PictureView from "./modals/PictureView.svelte";
+import RouteView from "./themes/Richard/Modals/RouteView.svelte";
+import PictureView from "./themes/Richard/Modals/PictureView.svelte";
 
 export type ActiveModal = {
     id: number;

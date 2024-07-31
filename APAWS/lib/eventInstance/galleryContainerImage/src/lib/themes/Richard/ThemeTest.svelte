@@ -4,13 +4,14 @@
     export let galleryData:ThemedGalleryData;
 
     import * as ModalManager from "$lib/ModalManager";
+	import RaceInfo from "./Components/RaceInfo.svelte";
 
     const mapView = () => {
         ModalManager.openModal(ModalManager.ModalTypes.RouteView, {});
     };
 
-    const pictureView = () => {
-        ModalManager.openModal(ModalManager.ModalTypes.PictureView, {});
+    const pictureView = (media:ThemedGalleryData['media'][0]) => {
+        ModalManager.openModal(ModalManager.ModalTypes.PictureView, {targetMedia:media});
     };
 
 </script>
@@ -24,40 +25,12 @@
 
 <div class="flex flex-row h-full pageWrapper">
     <!-- Left info bar -->
-    <div class="flex flex-col InfoBox gap-3">
+    <div class="flex flex-col InfoBox gap-2">
         <div class="logo mt-5"></div>
-        <div class="textBox flex flex-col gap-6">
-            <div class="flex flex-row justify-between">
-                <div class="mb-2">
-                    <p class="text-4xl">Race title</p>
-                </div>
-                <div>
-                    <p class="text-l mr-2">29/07/2024</p>
-                </div>
-            </div>
 
-            <div class="flex flex-col gap-1">
-                <p class="text-xl">Particapant name:</p>
-                <p class="text-l">Joe blogs</p>
-            </div>
-            <div class="flex flex-col gap-1">
-                <p class="text-xl">Participant number:</p>
-                <p class="text-l">#125</p>
-            </div>
-            <div class="flex flex-col gap-1">
-                <p class="text-xl">Race length:</p>
-                <p class="text-l">42KM</p>
-            </div>
-            <div class="flex flex-col gap-1">
-                <p class="text-xl">Completion time:</p>
-                <p class="text-l">4 hours and 11 mins</p>
-            </div>
-            <div class="flex flex-col gap-1">
-                <p class="text-xl">Race information:</p>
-                <p class="text-l">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid cumque vel itaque maiores fuga doloribus excepturi perspiciatis, velit voluptate ut earum at iste quas hic eius! Velit fugiat minus similique.</p>
-            </div>
-        </div>  
-        <div class="placeHolder rounded map-fx flex flex-col" on:click={mapView}>
+        <RaceInfo></RaceInfo>
+        
+        <div class="placeHolder rounded map-fx flex flex-col mt-4 mb-4" on:click={mapView}>
             <div class="flex flex-row">
                 <div class="nameShape">
                     <p class="text-xl pl-1 pt-2 pb-2">Route map</p>
@@ -72,9 +45,9 @@
         </div>
     </div>
     <!-- Central hedder with race name -->
-    <div class="flex flex-col main-section">
+    <div class="flex flex-col main-section ml-3">
         <div class="hero-wrapper">
-            <div class="hero mb-7">
+            <div class="hero mb-3">
                 <div class="tint flex items-center justify-center">
                     <p class="hero-title">RACE NAME</p>
                 </div>
@@ -89,7 +62,7 @@
                 <div class="gallery-container">
                     {#each galleryData.media as media}
                         <div class="gallery-image">
-                            <img class="rounded" src={media.thumbnail} alt={media.ingress} on:click={pictureView}/>
+                            <img class="rounded" src={media.thumbnail} alt={media.ingress} on:click={()=>{pictureView(media)}}/>
                         </div>
                     {/each}
                 </div>
@@ -129,7 +102,7 @@
     .gallery-image {
         flex: 1 1 300px;
         border-radius: 10px;
-        padding: 15px;
+        padding: 8px;
         object-fit: cover;
         
     }
@@ -140,27 +113,13 @@
         /* margin: 1rem; */
         
     }
-
-    .textBox {
-        padding-left: 1rem;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        background: #00afef79;
-        font-size: large;
-        border-radius: 6px;
-        color: white;
-        margin-top: 1rem;
-        border-radius: 5px;
-        box-shadow: 0px 0px 20px 0px rgba(22, 14, 14, 0.486);
-
-    }
     
     .placeHolder {
         background-image: url(/themes/Richards/temproute.png);
         border-color: #ffffff;
         border-width: 2px;
         text-align: center;
-        margin: 1rem;
+        /* margin: 1rem; */
         height: 300px;
     }
 
@@ -186,11 +145,12 @@
   .nameShape {
     position: auto;
     background-color: #ffffff;
-    width: 50%;
+    width: 30%;
     top: 0;
     left: 0;
-    border-end-end-radius:100% ;
+    border-end-end-radius:50px ;
     text-align: start;
+    color: #00afef;
   }
   .nameShapeCurve {
     /* position: auto;
@@ -231,8 +191,8 @@
     font-size: 5rem;
   }
   .hero-wrapper {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 9px;
+    padding-right: 9px;
   }
 
   /* .main-section {
