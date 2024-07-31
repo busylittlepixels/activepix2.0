@@ -9,6 +9,10 @@
         ModalManager.openModal(ModalManager.ModalTypes.RouteView, {});
     };
 
+    const pictureView = () => {
+        ModalManager.openModal(ModalManager.ModalTypes.PictureView, {});
+    };
+
 </script>
 <!-- Background code -->
 <div class="background w-full h-full"></div>
@@ -21,35 +25,50 @@
 <div class="flex flex-row h-full pageWrapper">
     <!-- Left info bar -->
     <div class="flex flex-col InfoBox gap-3">
-        <div class="logo mt-3"></div>
+        <div class="logo mt-5"></div>
         <div class="textBox flex flex-col gap-6">
-            <div class="mb-2">
-                <a class="text-4xl">Race title</a>
+            <div class="flex flex-row justify-between">
+                <div class="mb-2">
+                    <p class="text-4xl">Race title</p>
+                </div>
+                <div>
+                    <p class="text-l mr-2">29/07/2024</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <p class="text-xl">Particapant name:</p>
+                <p class="text-l">Joe blogs</p>
             </div>
             <div class="flex flex-col gap-1">
-                <a class="text-xl">Particapant name:</a>
-                <a class="text-l">Joe blogs</a>
+                <p class="text-xl">Participant number:</p>
+                <p class="text-l">#125</p>
             </div>
             <div class="flex flex-col gap-1">
-                <a class="text-xl">Participant number:</a>
-                <a class="text-l">#125</a>
+                <p class="text-xl">Race length:</p>
+                <p class="text-l">42KM</p>
             </div>
             <div class="flex flex-col gap-1">
-                <a class="text-xl">Race length:</a>
-                <a class="text-l">42KM</a>
+                <p class="text-xl">Completion time:</p>
+                <p class="text-l">4 hours and 11 mins</p>
             </div>
             <div class="flex flex-col gap-1">
-                <a class="text-xl">Completion time:</a>
-                <a class="text-l">4 hours and 11 mins</a>
-            </div>
-            <div class="flex flex-col gap-1">
-                <a class="text-xl">Race information:</a>
-                <a class="text-l">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid cumque vel itaque maiores fuga doloribus excepturi perspiciatis, velit voluptate ut earum at iste quas hic eius! Velit fugiat minus similique.</a>
+                <p class="text-xl">Race information:</p>
+                <p class="text-l">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid cumque vel itaque maiores fuga doloribus excepturi perspiciatis, velit voluptate ut earum at iste quas hic eius! Velit fugiat minus similique.</p>
             </div>
         </div>  
-        <div class="placeHolder rounded map-fx flex flex-col">
-            <a>MAP WITH ROUTE INCLUDED </a>
-            <a>could be a pop out model and bonus points if you could have just random pictures of around the route if ya have geo-tags or sumt</a>
+        <div class="placeHolder rounded map-fx flex flex-col" on:click={mapView}>
+            <div class="flex flex-row">
+                <div class="nameShape">
+                    <p class="text-xl pl-1 pt-2 pb-2">Route map</p>
+                </div>
+
+                <div class="nameShapeCurve">    
+                </div>  
+
+                <div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Central hedder with race name -->
@@ -57,7 +76,10 @@
         <div class="hero-wrapper">
             <div class="hero mb-7">
                 <div class="tint flex items-center justify-center">
-                    <a class="hero-title">RACE NAME</a>
+                    <p class="hero-title">RACE NAME</p>
+                </div>
+                <div class="flex flex-row justify-start items-end">
+                    
                 </div>
             </div>
         </div>
@@ -67,7 +89,7 @@
                 <div class="gallery-container">
                     {#each galleryData.media as media}
                         <div class="gallery-image">
-                            <img class="rounded" src={media.thumbnail} alt={media.ingress} />
+                            <img class="rounded" src={media.thumbnail} alt={media.ingress} on:click={pictureView}/>
                         </div>
                     {/each}
                 </div>
@@ -134,7 +156,9 @@
     }
     
     .placeHolder {
-        background-color: white;
+        background-image: url(/themes/Richards/temproute.png);
+        border-color: #ffffff;
+        border-width: 2px;
         text-align: center;
         margin: 1rem;
         height: 300px;
@@ -156,6 +180,26 @@
   }
   .stripe svg {
     width: 100%;
+    height: auto;
+  }
+
+  .nameShape {
+    position: auto;
+    background-color: #ffffff;
+    width: 50%;
+    top: 0;
+    left: 0;
+    border-end-end-radius:100% ;
+    text-align: start;
+  }
+  .nameShapeCurve {
+    /* position: auto;
+    background-color: #ffffff;
+    width: 50%; */
+  }
+
+  .nameShape svg {
+    width: 50%;
     height: auto;
   }
 

@@ -4,6 +4,7 @@
 import { get, writable, type Writable } from "svelte/store";
 import ExampleModal from "./modals/ExampleModal.svelte";
 import RouteView from "./modals/RouteView.svelte";
+import PictureView from "./modals/PictureView.svelte";
 
 export type ActiveModal = {
     id: number;
@@ -21,7 +22,8 @@ export const ActiveModalStore:Writable<{
 //Add modal types here
 export enum ModalTypes {
     ExampleModal,
-    RouteView
+    RouteView,
+    PictureView,
 
 }
 
@@ -29,6 +31,7 @@ export enum ModalTypes {
 export const ModalTypeMapping = {
     [ModalTypes.ExampleModal]: ExampleModal,
     [ModalTypes.RouteView]: RouteView,
+    [ModalTypes.PictureView]: PictureView,
 
 }
 
