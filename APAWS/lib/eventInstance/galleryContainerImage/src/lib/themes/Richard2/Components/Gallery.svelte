@@ -15,6 +15,7 @@
     {#if (galleryData)}
     <div class="flex flex-col w-full">
         <p class="Header">{galleryData.galleryConfig.title}</p>
+        <p>{galleryData.galleryConfig.location} |  {galleryData.galleryConfig.date}</p>
     </div>
     {:else}
     <div>

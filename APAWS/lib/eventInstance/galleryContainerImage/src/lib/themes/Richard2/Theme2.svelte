@@ -6,10 +6,11 @@
     import * as ModalManager from "$lib/ModalManager";
     import Topbar from "$lib/themes/Richard2/Components/Topbar.svelte"
 	  import Gallery from "./Components/Gallery.svelte";
+	import HeroTheme2 from "./Components/HeroTheme2.svelte";
 	import SponsorBox from "./Components/SponsorBox.svelte";
 
     const mapView = () => {
-        ModalManager.openModal(ModalManager.ModalTypes.RouteView, {});
+        ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpciture, {});
     };
 
 </script>
@@ -23,6 +24,8 @@
 </div>    
 <Topbar></Topbar>
 <div class="flex flex-col h-full pageWrapper gap-4">
+
+   <HeroTheme2 {galleryData}></HeroTheme2>
 
     <SponsorBox {galleryData}></SponsorBox>
 
