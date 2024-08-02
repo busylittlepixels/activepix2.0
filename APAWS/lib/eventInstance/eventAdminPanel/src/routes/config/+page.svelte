@@ -12,15 +12,16 @@
 	
 	let iTitle:Writable<string> = writable("");
 	let iLogo:Writable<CMSTypes.Media | null> = writable(null);
-	let iOverlay:Writable<CMSTypes.Media | null> = writable(null);
+	let iOverlayPortrait:Writable<CMSTypes.Media | null> = writable(null);
+	let iOverlayLandscape:Writable<CMSTypes.Media | null> = writable(null);
 
 	let ctaText:Writable<string> = writable("");
 	let ctaImage:Writable<CMSTypes.Media | null> = writable(null);
-	let ctaURL:Writable<string> = writable("");
+	let ctaLink:Writable<string> = writable("");
 	
-	let ctaAlternateText:Writable<string> = writable("");
-	let ctaAlternateImage:Writable<CMSTypes.Media | null> = writable(null);
-	let ctaAlternateURL:Writable<string> = writable("");
+	let ctaAltText:Writable<string> = writable("");
+	let ctaAltImage:Writable<CMSTypes.Media | null> = writable(null);
+	let ctaAltLink:Writable<string> = writable("");
 
 	async function handleSubmit(){
 		let res = await fetch(Endpoints.cms.galleryConfig.base, {
@@ -32,7 +33,14 @@
 			body: JSON.stringify({
 				title: $iTitle,
 				logo: $iLogo?.id,
-				overlayImage: $iOverlay?.id,
+				overlayImagePortrait: $iOverlayPortrait?.id,
+				overlayImageLandscape: $iOverlayLandscape?.id,
+				ctaText: $ctaText,
+				ctaImage: $ctaImage?.id,
+				ctaLink: $ctaLink,
+				ctaAltText: $ctaAltText,
+				ctaAltImage: $ctaAltImage?.id,
+				ctaAltLink: $ctaAltLink,
 			}),
 		});
 		let resdata = await res.json();
@@ -58,10 +66,45 @@
 		} else {
 			// console.error("No logo found");
 		}
-		if($data.overlayImage){
-			iOverlay.set($data.overlayImage as CMSTypes.Media);
+		if($data.overlayImagePortrait){
+			iOverlayPortrait.set($data.overlayImagePortrait as CMSTypes.Media);
 		} else {
 			// console.error("No overlay found");
+		}
+		if($data.overlayImageLandscape){
+			iOverlayLandscape.set($data.overlayImageLandscape as CMSTypes.Media);
+		} else {
+			// console.error("No overlay found");
+		}
+		if($data.ctaText){
+			ctaText.set($data.ctaText);
+		} else {
+			// console.error("No ctaText found");
+		}
+		if($data.ctaImage){
+			ctaImage.set($data.ctaImage as CMSTypes.Media);
+		} else {
+			// console.error("No ctaImage found");
+		}
+		if($data.ctaLink){
+			ctaLink.set($data.ctaLink);
+		} else {
+			// console.error("No ctaLink found");
+		}
+		if($data.ctaAltText){
+			ctaAltText.set($data.ctaAltText);
+		} else {
+			// console.error("No ctaAltText found");
+		}
+		if($data.ctaAltImage){
+			ctaAltImage.set($data.ctaAltImage as CMSTypes.Media);
+		} else {
+			// console.error("No ctaAltImage found");
+		}
+		if($data.ctaAltLink){
+			ctaAltLink.set($data.ctaAltLink);
+		} else {
+			// console.error("No ctaAltLink found");
 		}
 
 
@@ -88,8 +131,12 @@
 					<ImageInput bind:currentMedia={iLogo} />
 				</div>
 				<div class="form-field field-stack">
-					<label for="overlay" class="p-2">Overlay</label>
-					<ImageInput bind:currentMedia={iOverlay} />
+					<label for="overlay" class="p-2">Overlay Landscape</label>
+					<ImageInput bind:currentMedia={iOverlayLandscape} />
+				</div>
+				<div class="form-field field-stack">
+					<label for="overlay" class="p-2">Overlay Portrait</label>
+					<ImageInput bind:currentMedia={iOverlayPortrait} />
 				</div>
 			</div>
 			
@@ -107,21 +154,21 @@
 
 				<div class="form-field field-stack">
 					<label for="sponsorTitle" class="p-2">Call to action URL</label>
-					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaURL} />
+					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaLink} />
 
 				<div class="form-field field-stack">
-					<label for="sponsorTitle" class="p-2">Alternate Call to action text</label>
-					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaAlternateText} />
+					<label for="sponsorTitle" class="p-2">Alt Call to action text</label>
+					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaAltText} />
 				</div>
 
 				<div class="form-field field-stack">
-					<label for="sponsorImage" class="p-2">Alternate Call to action image</label>
-					<ImageInput bind:currentMedia={ctaAlternateImage} />
+					<label for="sponsorImage" class="p-2">Alt Call to action image</label>
+					<ImageInput bind:currentMedia={ctaAltImage} />
 				</div>
 
 				<div class="form-field field-stack">
-					<label for="sponsorTitle" class="p-2">Alternate Call to action URL</label>
-					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaAlternateURL} />
+					<label for="sponsorTitle" class="p-2">Alt Call to action URL</label>
+					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaAltLink} />
 				</div>
 			</div>
 			
@@ -161,6 +208,6 @@
 	}
 
 	h1{
-		@apply text-3xl mt-6
+		@apply text-3xl mt-6;
 	}
 </style>

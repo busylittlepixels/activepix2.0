@@ -114,7 +114,14 @@ export interface Galleryconfig {
   id: string;
   title?: string | null;
   logo?: string | Media | null;
-  overlayImage?: string | Media | null;
+  overlayImageLandscape?: string | Media | null;
+  overlayImagePortrait?: string | Media | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
+  ctaImage?: string | Media | null;
+  ctaAltText?: string | null;
+  ctaAltLink?: string | null;
+  ctaAltImage?: string | Media | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }

@@ -18,11 +18,49 @@ const GalleryConfiguration:GlobalConfig = {
             relationTo: 'media',
         },
         {
-            name: 'overlayImage',
-            label: 'Overlay Image',
+            name: 'overlayImageLandscape',
+            label: 'Overlay Image Landscape',
             type: 'upload',
             relationTo: 'media',
-        }
+        },
+        {
+            name: 'overlayImagePortrait',
+            label: 'Overlay Image Portrait',
+            type: 'upload',
+            relationTo: 'media',
+        },
+        {
+            name: 'ctaText',
+            label: 'CTA Text',
+            type: 'text',
+        },
+        {
+            name: 'ctaLink',
+            label: 'CTA Link',
+            type: 'text',
+        },
+        {
+            name: 'ctaImage',
+            label: 'CTA Image',
+            type: 'upload',
+            relationTo: 'media',
+        },
+        {
+            name: 'ctaAltText',
+            label: 'CTA Alt Text',
+            type: 'text',
+        },
+        {
+            name: 'ctaAltLink',
+            label: 'CTA Alt Link',
+            type: 'text',
+        },
+        {
+            name: 'ctaAltImage',
+            label: 'CTA Alt Image',
+            type: 'upload',
+            relationTo: 'media',
+        },
     ]
 }
 
