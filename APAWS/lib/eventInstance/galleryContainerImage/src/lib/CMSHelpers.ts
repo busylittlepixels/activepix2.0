@@ -41,16 +41,16 @@ export namespace CMSHelpers {
         logo: TMediaItem | undefined;
         overlayImage: TMediaItem | undefined;
         ctaText: string;
-        ctaMedia: TMediaItem | undefined;
+        ctaImage: TMediaItem | undefined;
         ctaUrl: string;
         ctaAltText: string;
-        ctaAltMedia: TMediaItem | undefined;
+        ctaAltImage: TMediaItem | undefined;
         ctaAltUrl: string;
         updatedAt: string;
     }
     export async function getGalleryConfig (altFetch?:any) : Promise<TGalleryConfig> {
         const fetcher = altFetch || fetch
-        let response = await fetcher(Endpoints.cms.galleryConfig.base)
+        let response = await fetcher(Endpoints.cms.galleryConfig.base + '?depth=3')
         if(response.status !== 200) {
             console.log('Error fetching gallery config', response.status)
             throw new Error('Error fetching gallery config')

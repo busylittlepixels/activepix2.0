@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import ModalWrapper from "../../../modals/utils/ModalWrapper.svelte";
+    import ModalWrapper from "./utils/ModalWrapper.svelte";
     import * as ModalManager from "$lib/ModalManager";
 	import type { MediaData } from "$lib/EventTypes";
 
