@@ -5,7 +5,7 @@
     export let data:PageData;
 
 </script>
-<pre>
+<!-- <pre>
 	{JSON.stringify(data, null, 2)}
-</pre>
+</pre> -->
 <ThemedGallery galleryData={data}/>

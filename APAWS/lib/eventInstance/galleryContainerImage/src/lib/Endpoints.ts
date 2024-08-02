@@ -17,7 +17,7 @@ export const Endpoints = {
         },
         media: {
             base: cmsBaseURL + '/api/media',
-            files: cmsBaseURL + '/media/',
+            files: cmsBaseURL,
         },
         galleryConfig: {
             base: cmsBaseURL + '/api/globals/galleryconfig',

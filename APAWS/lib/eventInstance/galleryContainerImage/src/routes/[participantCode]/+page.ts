@@ -25,7 +25,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
     const [mediaData, participantData] = await Promise.all([mediaDataPromise, participantDataPromise]);
 
     let galleryData:ThemedGalleryData = {
-        theme: ETheme.Test,
+        theme: ETheme.Theme2,
         participantCode: participantNumber,
         media: mediaData,
         participantData: participantData?.docs[0]?.additionalData ?? null,
