@@ -39,6 +39,8 @@ export namespace CMSHelpers {
     export type TGalleryConfig = {
         title: string;
         logo: TMediaItem | undefined;
+        date: string | undefined;
+        location: string | undefined;
         overlayImage: TMediaItem | undefined;
         ctaText: string;
         ctaMedia: TMediaItem | undefined;

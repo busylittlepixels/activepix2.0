@@ -20,3 +20,7 @@ new EventInstanceStack(app, 'APAWS-EI-TEST', {
   name: 'APAWSEI-TEST',
   env: env
 });
+new EventInstanceStack(app, 'APAWS-EI-STAGING', {
+  name: 'APAWSEI-STAGING',
+  env: env
+});
