@@ -2,6 +2,9 @@ import { GlobalConfig } from "payload/types";
 
 const GalleryConfiguration:GlobalConfig = {
     slug: 'galleryconfig',
+    access: {
+        read: () => true,
+    },
     fields: [
         {
             name: 'title',

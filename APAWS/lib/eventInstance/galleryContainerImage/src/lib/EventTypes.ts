@@ -1,3 +1,4 @@
+import type { CMSHelpers } from "./CMSHelpers"
 import type { ETheme } from "./Theme"
 
 export type MediaData = {
@@ -11,4 +12,5 @@ export type ThemedGalleryData = {
     participantCode: number,
     media: MediaData[],
     participantData: any,//| undefined,
+    galleryConfig: CMSHelpers.TGalleryConfig
 }

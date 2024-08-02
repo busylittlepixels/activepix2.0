@@ -18,6 +18,8 @@ export const load: PageLoad = async ({ fetch, params }) => {
     const mediaDataPromise = EventData.getImagesForParticipant(participantNumber, fetch);
     //Get the participant data from CMS
     const participantDataPromise = CMSHelpers.getParticipantData(participantNumber.toString(), fetch)
+
+    const galleryConfigPromise = CMSHelpers.getGalleryConfig(fetch);
     
     //Wait for both promises to resolve
     const [mediaData, participantData] = await Promise.all([mediaDataPromise, participantDataPromise]);
@@ -26,7 +28,9 @@ export const load: PageLoad = async ({ fetch, params }) => {
         theme: ETheme.Test,
         participantCode: participantNumber,
         media: mediaData,
-        participantData: participantData?.docs[0]?.additionalData ?? null
+        participantData: participantData?.docs[0]?.additionalData ?? null,
+        // galleryConfig: {} as any
+        galleryConfig: (await galleryConfigPromise) ?? null
     };
 
     return galleryData
