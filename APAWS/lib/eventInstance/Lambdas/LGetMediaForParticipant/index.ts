@@ -21,6 +21,7 @@ export const handler = async (event: APIGatewayEvent) => {
     const ddb = new AWS.DynamoDB()
     const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
     const PARTICIPANT_METADATA_TABLE = process.env.PARTICIPANT_METADATA_TABLE;
+    const IMAGE_METADATA_TABLE = process.env.IMAGE_METADATA_TABLE;
     if (!PROCESSED_BUCKET) {
         throw new Error('PROCESSED_BUCKET environment variable not set');
     }
@@ -28,6 +29,11 @@ export const handler = async (event: APIGatewayEvent) => {
     if (!PARTICIPANT_METADATA_TABLE) {
         throw new Error('PARTICIPANT_METADATA_TABLE environment variable not set');
     }
+
+    if (!IMAGE_METADATA_TABLE) {
+        throw new Error('IMAGE_METADATA_TABLE environment variable not set');
+    }
+    
 
     //Parse the body
     console.log('Received event:', JSON.stringify(event, null, 2));
@@ -59,9 +65,9 @@ export const handler = async (event: APIGatewayEvent) => {
     const participantCode = body.participantCode;
 
     //Query the metadata table
-    let queryResult;
+    let participantQueryResult;
     try {
-        queryResult = await ddb.query({
+        participantQueryResult = await ddb.query({
             TableName: PARTICIPANT_METADATA_TABLE,
             KeyConditionExpression: 'participantCode = :participantCode',
             ExpressionAttributeValues: {
@@ -78,15 +84,47 @@ export const handler = async (event: APIGatewayEvent) => {
         }
     }
 
-    //Process the query result
-    let items = queryResult.Items || [];
+    //Process the participantQueryResult
+    let items = participantQueryResult.Items || [];
     
     let responseItems = items.map(item => {
-        return {
-            ingress: item.ingressKey.S,
-            thumbnail: `https://${PROCESSED_BUCKET}.s3.amazonaws.com/${item.thumbnailKey.S}`,
-            large: `https://${PROCESSED_BUCKET}.s3.amazonaws.com/${item.fullsizeKey.S}`
-        }
+        const ingressKeysForParticipant = item.ingressKeys.SS || [];
+        //For each key, query the image metadata table and return an object:
+        //Query for the image metadata
+        return ingressKeysForParticipant.map(async key => {
+            let imageMetadataQueryResult;
+            try {
+                imageMetadataQueryResult = await ddb.getItem({
+                    TableName: IMAGE_METADATA_TABLE,
+                    Key: { ingressKey: { S: key } }
+                }).promise();
+            } catch (e) {
+                console.error('Failed to query image metadata table', e);
+                return {
+                    error: 'Failed to query image metadata table'
+                }
+            }
+            console.log({
+                key: key,
+                imageMetadataQueryResult: imageMetadataQueryResult
+            })
+            const thumbnailKey = imageMetadataQueryResult.Item?.thumbnailKey.S
+            const fullsizeKey = imageMetadataQueryResult.Item?.fullsizeKey.S
+
+            if(!thumbnailKey || !fullsizeKey) {
+                console.error('Missing thumbnail or fullsize key', imageMetadataQueryResult.Item);
+                return {
+                    error: 'Missing thumbnail or fullsize key'
+                }
+            }
+
+
+            return {
+                ingress: key,
+                thumbnail: `https://${PROCESSED_BUCKET}.s3.amazonaws.com/${thumbnailKey}`,
+                large: `https://${PROCESSED_BUCKET}.s3.amazonaws.com/${fullsizeKey}`
+            }
+        })
     })
     console.log('Successfully processed request', responseItems);
     return {

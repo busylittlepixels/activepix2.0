@@ -33,7 +33,7 @@
     <div class="controls">
         <input type="file" class="file-input w-full max-w-xs" bind:files={$files}/>
         {#if $files?.length}
-            <button class="btn" on:click|preventDefault|stopPropagation={upload}>Upload</button>
+            <button class="btn ml-2" on:click|preventDefault|stopPropagation={upload}>Upload</button>
         {/if}
     </div>
 </div>
@@ -56,5 +56,8 @@
     }
     .btn {
         margin-top: 1rem;
+    }
+    img{
+        border-radius: 5px;
     }
 </style>

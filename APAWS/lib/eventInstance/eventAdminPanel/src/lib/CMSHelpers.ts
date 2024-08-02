@@ -18,6 +18,12 @@ export namespace CMSTypes {
         title?: string | null;
         logo?: string | Media | null;
         overlayImage?: string | Media | null;
+        ctaText?: string | null;
+        ctaMedia?: string | Media | null;
+        ctaUrl?: string | null;
+        ctaAltText?: string | null;
+        ctaAltMedia?: string | Media | null;
+        ctaAltUrl?: string | null;
         updatedAt?: string | null;
         createdAt?: string | null;
     }

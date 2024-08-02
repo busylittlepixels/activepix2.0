@@ -24,10 +24,12 @@ import * as Toolkit from './Toolkit';
 
 export const handler = async (event: S3Event) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
+    console.log('Env:', process.env)
     //Setup context
     const MEDIA_BUCKET = process.env.MEDIA_BUCKET;
     const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
     const IMAGE_METADATA_TABLE = process.env.IMAGE_METADATA_TABLE;
+    const PARTICIPANT_METADATA_TABLE = process.env.PARTICIPANT_METADATA_TABLE;
     if (!MEDIA_BUCKET) {
         throw new Error('MEDIA_BUCKET environment variable not set');
     }
@@ -36,6 +38,9 @@ export const handler = async (event: S3Event) => {
     }
     if (!IMAGE_METADATA_TABLE) {
         throw new Error('IMAGE_METADATA_TABLE environment variable not set');
+    }
+    if (!PARTICIPANT_METADATA_TABLE) {
+        throw new Error('PARTICIPANT_METADATA_TABLE environment variable not set');
     }
 
     const s3 = new AWS.S3();
@@ -57,7 +62,8 @@ export const handler = async (event: S3Event) => {
             ingressBucket: MEDIA_BUCKET,
             processedBucket: PROCESSED_BUCKET,
             ingressKey: key,
-            metadataTable: IMAGE_METADATA_TABLE,
+            imageMetadataTable: IMAGE_METADATA_TABLE,
+            participantMetadataTable: PARTICIPANT_METADATA_TABLE,
         });
 
         if (!attemptResult.success) {

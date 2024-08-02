@@ -52,13 +52,16 @@ export class LBPayloadCMS extends Construct {
     // S3 Bucket
     this.bucket = new s3.Bucket(this, `${name}PayloadCMSBucket`, {
       ...bucketProps,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     // VPC
     const vpcInstance = vpc ?? new ec2.Vpc(this, `${name}PayloadCMSVpc`, { maxAzs: 2 });
 
     // ECS Cluster
-    this.cluster = cluster ?? new ecs.Cluster(this, `${name}PayloadCMSCluster`, { vpc: vpcInstance });
+    this.cluster = cluster ?? new ecs.Cluster(this, `${name}PayloadCMSCluster`, {
+      vpc: vpcInstance,
+    });
 
     const executionRole = new iam.Role(this, `${name}ExecutionRole`, {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),

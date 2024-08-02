@@ -13,7 +13,6 @@ export interface EventInstanceStackProps extends cdk.StackProps {
   // Define construct properties here
   name: string;
   vpc?: ec2.Vpc;
-  
 }
 
 export class EventInstanceStack extends cdk.Stack {
@@ -52,6 +51,9 @@ export class EventInstanceStack extends cdk.Stack {
       tags: {
         'eventname': props.name,
       },
+      bucketProps: {
+        bucketName: namepfx.toLowerCase() + 'payload-cms-bucket',
+      }
     });
 
     // Output the LoadBalancer DNS name
@@ -88,19 +90,23 @@ export class EventInstanceStack extends cdk.Stack {
     //Create buckets
     const MediaIngressBucket = new s3.Bucket(this, namepfx + 'MediaIngressBucket', {
       bucketName: namepfx.toLowerCase() + 'media-ingress-bucket',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     const ProcessedBucket = new s3.Bucket(this, namepfx + 'ProcessedBucket', {
       bucketName: namepfx.toLowerCase() + 'processed-bucket',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     //Create DynamoDB tables
     const ProcessedImageMetadataTable = new ddb.Table(this, namepfx + 'ProcessedImageMetadataTable', {
       partitionKey: { name: 'ingressKey', type: ddb.AttributeType.STRING },
       tableName: namepfx.toLowerCase() + 'processed-image-metadata-table',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     const ParticipantMetadataTable = new ddb.Table(this, namepfx + 'ParticipantMetadataTable', {
       partitionKey: { name: 'participantCode', type: ddb.AttributeType.NUMBER },
       tableName: namepfx.toLowerCase() + 'participant-metadata-table',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
 
@@ -113,7 +119,10 @@ export class EventInstanceStack extends cdk.Stack {
         MEDIA_BUCKET: MediaIngressBucket.bucketName,
         PROCESSED_BUCKET: ProcessedBucket.bucketName,
         PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
       },
+      timeout: cdk.Duration.seconds(45),
+      memorySize: 512,
     })
 
     //Grant the Lambda function read on the MediaIngressBucket
@@ -128,5 +137,27 @@ export class EventInstanceStack extends cdk.Stack {
 
     //Create a trigger for the Lambda function
     MediaIngressBucket.addEventNotification(s3.EventType.OBJECT_CREATED, new s3n.LambdaDestination(LProcessImage));
+
+
+    //Create LGetMediaForParticipant Lambda function
+    const LGetMediaForParticipant = new lambda.Function(this, namepfx + 'LGetMediaForParticipant', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LGetMediaForParticipant'),
+      environment: {
+        MEDIA_BUCKET: MediaIngressBucket.bucketName,
+        PROCESSED_BUCKET: ProcessedBucket.bucketName,
+        PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+      },
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 256,
+    })
+
+    //Grant the Lambda function read on the ParticipantMetadataTable
+    //Grant the Lambda function read on the ProcessedImageMetadataTable
+    ParticipantMetadataTable.grantReadData(LGetMediaForParticipant);
+    ProcessedImageMetadataTable.grantReadData(LGetMediaForParticipant);
+
   }
 }

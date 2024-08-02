@@ -14,8 +14,8 @@ interface BasicContext {
     ddb: AWS.DynamoDB;
     processedBucket: string;
     ingressBucket: string;
-    metadataTable: string;
-    
+    imageMetadataTable: string;
+    participantMetadataTable: string;
 }
 
 
@@ -85,7 +85,7 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
     };
 
     await ctx.ddb.putItem({
-        TableName: ctx.metadataTable,
+        TableName: ctx.imageMetadataTable,
         Item: {
             ingressKey: { S: ctx.ingressKey },
             participantCodes: { NS: metadataItem.participantCodes.map(code => code.toString()) },
@@ -106,13 +106,18 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
     let participantCodes = metadataItem.participantCodes;
     await Promise.all(participantCodes.map(async code => {
         let participantData = await ctx.ddb.getItem({
-            TableName: ctx.metadataTable,
+            TableName: ctx.participantMetadataTable,
             Key: { participantCode: { N: code.toString() } }
         }).promise();
-        let ingressKeys = participantData?.Item?.ingressKeys as string[] || [] as string[];
-        ingressKeys.push(metadataItem.ingressKey);
+        let ingressKeys = participantData?.Item?.ingressKeys.SS
+            ? participantData.Item.ingressKeys.SS
+            : [];
+        ingressKeys.push(ctx.ingressKey);
+        //Clear duplicates
+        ingressKeys = Array.from(new Set(ingressKeys));
+        
         await ctx.ddb.putItem({
-            TableName: ctx.metadataTable,
+            TableName: ctx.participantMetadataTable,
             Item: {
                 participantCode: { N: code.toString() },
                 ingressKeys: { SS: ingressKeys },
