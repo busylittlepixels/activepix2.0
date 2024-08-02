@@ -9,6 +9,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
+import { LBSveltekit } from './Constructs/LBSveltekit';
 export interface EventInstanceStackProps extends cdk.StackProps {
   // Define construct properties here
   name: string;
@@ -19,6 +20,8 @@ export class EventInstanceStack extends cdk.Stack {
   readonly payloadCMSImage: ecrAssets.DockerImageAsset;
   readonly cluster: ecs.Cluster;
   readonly EventInstanceCMS: LBPayloadCMS;
+  readonly EventInstanceGallery: LBSveltekit;
+  readonly EventInstanceAdmin: LBSveltekit;
   constructor(scope: Construct, id: string, props: EventInstanceStackProps) {
     super(scope, id, props);
     const namepfx = `ei-${props.name}-`
@@ -56,17 +59,59 @@ export class EventInstanceStack extends cdk.Stack {
       }
     });
 
-    // Output the LoadBalancer DNS name
-    new cdk.CfnOutput(this, namepfx + 'LoadBalancerDNS', {
-      value: this.EventInstanceCMS.loadBalancer.loadBalancerDnsName,
-      description: 'The DNS name of the LoadBalancer',
+    //Create the gallery docker image asset from the ./eventInstance/galleryContainerImage directory
+    const galleryImage = new ecrAssets.DockerImageAsset(this, 'GalleryImage', {
+      directory: './lib/eventInstance/galleryContainerImage',
+      assetName: namepfx + 'GalleryImage',
+    });
+
+    //Create the LBSveltekit construct for the gallery
+    this.EventInstanceGallery = new LBSveltekit(this, namepfx + 'Gallery', {
+      containerImage: galleryImage.imageUri,
+      name: namepfx,
+      vpc: props.vpc,
+      cluster: this.cluster,
+      tags: {
+        'eventname': props.name,
+      },
+    });
+
+    //Create the admin docker image asset from the ./eventInstance/eventAdminPanel directory
+    const adminImage = new ecrAssets.DockerImageAsset(this, 'AdminImage', {
+      directory: './lib/eventInstance/eventAdminPanel',
+      assetName: namepfx + 'AdminImage',
+    });
+
+    //Create the LBSveltekit construct for the admin panel
+    this.EventInstanceAdmin = new LBSveltekit(this, namepfx + 'Admin', {
+      containerImage: adminImage.imageUri,
+      name: namepfx,
+      vpc: props.vpc,
+      cluster: this.cluster,
+      tags: {
+        'eventname': props.name,
+      },
     });
     
-    // Output the LoadBalancer URL
-    new cdk.CfnOutput(this, namepfx + 'LoadBalancerURL', {
-      value: 'http://' + this.EventInstanceCMS.loadBalancer.loadBalancerDnsName,
-      description: 'The URL of the LoadBalancer',
+    //Output the URL of the EventInstanceAdmin service
+    new cdk.CfnOutput(this, namepfx + 'AdminURL', {
+      value: 'http://' + this.EventInstanceAdmin.loadBalancer.loadBalancerDnsName,
+      description: 'The URL of the Admin service',
     });
+    
+
+    //Output the URL of the gallery service
+    new cdk.CfnOutput(this, namepfx + 'GalleryURL', {
+      value: 'http://' + this.EventInstanceGallery.loadBalancer.loadBalancerDnsName,
+      description: 'The URL of the Gallery service',
+    });
+
+    //Output the URL of the PayloadCMS service
+    new cdk.CfnOutput(this, namepfx + 'PayloadCMSURL', {
+      value: 'http://' + this.EventInstanceCMS.loadBalancer.loadBalancerDnsName,
+      description: 'The URL of the PayloadCMS service',
+    });
+
     
     /**
  * LProcessImage - Lambda function that processes images uploaded to MediaIngress bucket, outputting to ProcessedMedia bucket.
@@ -158,6 +203,5 @@ export class EventInstanceStack extends cdk.Stack {
     //Grant the Lambda function read on the ProcessedImageMetadataTable
     ParticipantMetadataTable.grantReadData(LGetMediaForParticipant);
     ProcessedImageMetadataTable.grantReadData(LGetMediaForParticipant);
-
   }
 }

@@ -16,7 +16,7 @@ const serviceAdminProps:ServiceAdminStackProps = {
   env: env
 }
 // new ServiceAdminStack(app, 'APAWS-SA', serviceAdminProps);
-new EventInstanceStack(app, 'APAWS-EI-STAGI', {
-  name: 'APAWSEI-STAGI',
+new EventInstanceStack(app, 'APAWS-EI-TEST', {
+  name: 'APAWSEI-TEST',
   env: env
 });

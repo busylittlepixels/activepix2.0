@@ -17,6 +17,8 @@ export namespace CMSTypes {
         id: string;
         title?: string | null;
         logo?: string | Media | null;
+        date?: string | null;
+        location?: string | null;
         overlayImage?: string | Media | null;
         ctaText?: string | null;
         ctaMedia?: string | Media | null;

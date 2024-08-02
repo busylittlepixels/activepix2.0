@@ -12,6 +12,8 @@
 	
 	let iTitle:Writable<string> = writable("");
 	let iLogo:Writable<CMSTypes.Media | null> = writable(null);
+	let iDateString:Writable<Date> = writable(new Date().toString());
+	let iLocation:Writable<string> = writable("");
 	let iOverlayPortrait:Writable<CMSTypes.Media | null> = writable(null);
 	let iOverlayLandscape:Writable<CMSTypes.Media | null> = writable(null);
 
@@ -33,6 +35,8 @@
 			body: JSON.stringify({
 				title: $iTitle,
 				logo: $iLogo?.id,
+				date: $iDateString.toString(),
+				location: $iLocation,
 				overlayImagePortrait: $iOverlayPortrait?.id,
 				overlayImageLandscape: $iOverlayLandscape?.id,
 				ctaText: $ctaText,
@@ -65,6 +69,16 @@
 			iLogo.set($data.logo as CMSTypes.Media);
 		} else {
 			// console.error("No logo found");
+		}
+		if($data.date){
+			iDateString.set((new Date($data.date)).toISOString().split('T')[0]);
+		} else {
+			// console.error("No date found");
+		}
+		if($data.location){
+			iLocation.set($data.location);
+		} else {
+			// console.error("No location found");
 		}
 		if($data.overlayImagePortrait){
 			iOverlayPortrait.set($data.overlayImagePortrait as CMSTypes.Media);
@@ -127,6 +141,14 @@
 					<input class="input" type="text" id="title" bind:value={$iTitle} />
 				</div>
 				<div class="form-field field-stack">
+					<label for="date" class="p-2">Date</label>
+					<input class="input" type="date" id="date" bind:value={$iDateString} />
+				</div>
+				<div class="form-field field-stack">
+					<label for="location" class="p-2">Location</label>
+					<input class="input" type="text" id="location" bind:value={$iLocation} />
+				</div>
+				<div class="form-field field-stack">
 					<label for="logo" class="p-2">Logo</label>
 					<ImageInput bind:currentMedia={iLogo} />
 				</div>
@@ -155,7 +177,7 @@
 				<div class="form-field field-stack">
 					<label for="sponsorTitle" class="p-2">Call to action URL</label>
 					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaLink} />
-
+				</div>
 				<div class="form-field field-stack">
 					<label for="sponsorTitle" class="p-2">Alt Call to action text</label>
 					<input class="input" type="text" id="sponsorTitle" bind:value={$ctaAltText} />

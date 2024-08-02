@@ -18,6 +18,16 @@ const GalleryConfiguration:GlobalConfig = {
             relationTo: 'media',
         },
         {
+            name: 'date',
+            label: 'Date',
+            type: 'date',
+        },
+        {
+            name: 'location',
+            label: 'Location',
+            type: 'text',
+        },
+        {
             name: 'overlayImageLandscape',
             label: 'Overlay Image Landscape',
             type: 'upload',
