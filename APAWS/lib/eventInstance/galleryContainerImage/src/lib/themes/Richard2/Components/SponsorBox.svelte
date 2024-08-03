@@ -36,8 +36,8 @@
     }
 
     .sizing {
-        min-height: 250px;
-        max-height: 350px;
+        min-height: 400px;
+        max-height: 500px;
         border-radius: 10px;
         flex: auto;
         background-size: cover;

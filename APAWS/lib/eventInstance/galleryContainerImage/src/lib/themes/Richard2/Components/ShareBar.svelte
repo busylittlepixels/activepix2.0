@@ -14,7 +14,7 @@
 
 <div class="flex flex-row justify-center items-center gap-6 mt-4 mb-4 w-full shareBox">
     <div class="flex">
-        <p class="text-4x1 clickable">Share Gallery</p>
+        <p class="text-4x1 clickable uppercase">Share Gallery</p>
     </div>
     <div class="flex clickable" >
         <svg width="2rem" height="2rem" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">

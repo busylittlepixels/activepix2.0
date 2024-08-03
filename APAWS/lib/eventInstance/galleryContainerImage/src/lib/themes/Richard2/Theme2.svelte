@@ -5,6 +5,7 @@
 
     import * as ModalManager from "$lib/ModalManager";
     import Topbar from "$lib/themes/Richard2/Components/Topbar.svelte"
+	import Bottombar from "./Components/Bottombar.svelte";
 	  import Gallery from "./Components/Gallery.svelte";
 	import HeroTheme2 from "./Components/HeroTheme2.svelte";
 	import ShareBar from "./Components/ShareBar.svelte";
@@ -16,16 +17,19 @@
 
 </script>
 <!-- Background code -->
-<pre>{JSON.stringify(galleryData, null, 2)}</pre>
+<!-- <pre>{JSON.stringify(galleryData, null, 2)}</pre> -->
 <div class="background w-full h-full"></div>
 <div class="stripe">
     <svg width="1920" height="865" viewBox="0 0 1920 865" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M-444.562 545.629C-659.298 971.212 -444.562 1260 -444.562 1260C-444.562 1260 976.861 -41.6196 2435.94 67.5393C3895.03 176.698 692.855 -379.299 -444.562 545.629Z" fill="#D9D9D9" fill-opacity="0.15"/>
         </svg>
 </div>    
-<Topbar></Topbar>
-<div class="flex flex-col h-full pageWrapper gap-4">
 
+<div class="flex flex-col pageWrapper gap-4">
+  <Topbar></Topbar>
+
+    <div class="mt-9"></div>
+    <div class="mt-9"></div>
    <HeroTheme2 {galleryData}></HeroTheme2>
 
    <ShareBar></ShareBar>
@@ -36,7 +40,10 @@
 
     <SponsorBox {galleryData}></SponsorBox>
 
+    
 </div>
+<div class="mt-4"></div>
+<Bottombar></Bottombar>
 
 <style>
 
