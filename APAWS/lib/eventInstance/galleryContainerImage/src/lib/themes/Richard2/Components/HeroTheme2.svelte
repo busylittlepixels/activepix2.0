@@ -8,7 +8,7 @@
 
 <div class="HeroWrapper flex w-full">
     {#if (galleryData)}
-        <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.ctaImage?.url}');">
+        <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.overlayImage?.url}');">
             {#if (galleryData.galleryConfig.ctaText)}
                 <div class="textOverlay w-full h-full items-center justify-center flex flex-col">
                     <p class="text-4xl"><span class="text-yellow-400">{galleryData.galleryConfig.title}</span></p>
@@ -37,17 +37,17 @@
     .HeroWrapper {
         padding-left: 5px;
         padding-right: 5px;
-        cursor: pointer;
+        /* cursor: pointer; */
         transition: all, 0.2s;
     }
 
-    .HeroWrapper:focus, .HeroWrapper:hover {
+    /* .HeroWrapper:focus, .HeroWrapper:hover {
         outline: 0;
         border: 0;
         opacity: 85%;
         transform: scale(101%);
         transition: all, 0.2s;
-    }
+    } */
 
     .sizing {
         min-height: 500px;

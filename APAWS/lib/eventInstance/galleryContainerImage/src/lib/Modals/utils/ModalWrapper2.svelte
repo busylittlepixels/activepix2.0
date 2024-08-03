@@ -58,17 +58,16 @@
         max-width: 95%;
         max-height: 95%;
         overflow: auto;
-        min-width: 600px;
+        min-width: 650px;
         /* min-height: 400px; */
         position: relative;
     }
 
     .modalTransparent {
-        background-color: rgba(0,0,0,0);
+
     }
 
     .background {
-        background: rgba(25, 30, 36, 1);
         position: absolute;
         z-index: -2;
         bottom: 0;
@@ -90,4 +89,5 @@
     width: 100%;
     height: auto;
   }
+  
 </style>

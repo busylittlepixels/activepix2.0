@@ -7,13 +7,13 @@
     import * as ModalManager from "$lib/ModalManager";
 
     const pictureView = (media:ThemedGalleryData['media'][0]) => {
-        ModalManager.openModal(ModalManager.ModalTypes.PictureView, {targetMedia:media});
+        ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpicture, {targetMedia:media});
     };
 
 </script>
 <div class="flex flex-col">   
     {#if (galleryData)}
-    <div class="flex flex-col w-full">
+    <div class="flex flex-col w-full mb-4">
         <p class="Header">{galleryData.galleryConfig.title}</p>
         <p>{galleryData.galleryConfig.location} |  {galleryData.galleryConfig.date}</p>
     </div>

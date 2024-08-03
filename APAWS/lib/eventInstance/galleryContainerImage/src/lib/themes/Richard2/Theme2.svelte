@@ -7,6 +7,7 @@
     import Topbar from "$lib/themes/Richard2/Components/Topbar.svelte"
 	  import Gallery from "./Components/Gallery.svelte";
 	import HeroTheme2 from "./Components/HeroTheme2.svelte";
+	import ShareBar from "./Components/ShareBar.svelte";
 	import SponsorBox from "./Components/SponsorBox.svelte";
 
     const mapView = () => {
@@ -26,6 +27,8 @@
 <div class="flex flex-col h-full pageWrapper gap-4">
 
    <HeroTheme2 {galleryData}></HeroTheme2>
+
+   <ShareBar></ShareBar>
 
     <SponsorBox {galleryData}></SponsorBox>
 
