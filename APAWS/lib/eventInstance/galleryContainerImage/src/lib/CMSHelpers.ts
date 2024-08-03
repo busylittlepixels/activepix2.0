@@ -41,13 +41,15 @@ export namespace CMSHelpers {
         logo: TMediaItem | undefined;
         date: string | undefined;
         location: string | undefined;
-        overlayImage: TMediaItem | undefined;
+        heroImage: TMediaItem;
+        overlayImagePortrait: TMediaItem | undefined;
+        overlayImageLandscape: TMediaItem | undefined;
         ctaText: string;
         ctaImage: TMediaItem | undefined;
-        ctaUrl: string;
+        ctaLink: string;
         ctaAltText: string;
         ctaAltImage: TMediaItem | undefined;
-        ctaAltUrl: string;
+        ctaAltLink: string;
         updatedAt: string;
     }
     export async function getGalleryConfig (altFetch?:any) : Promise<TGalleryConfig> {
