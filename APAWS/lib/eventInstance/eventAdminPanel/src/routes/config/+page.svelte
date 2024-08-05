@@ -12,8 +12,9 @@
 	
 	let iTitle:Writable<string> = writable("");
 	let iLogo:Writable<CMSTypes.Media | null> = writable(null);
-	let iDateString:Writable<Date> = writable(new Date().toString());
+	let iDateString:Writable<string> = writable(new Date().toString());
 	let iLocation:Writable<string> = writable("");
+	let iHeroImage:Writable<CMSTypes.Media | null> = writable(null);
 	let iOverlayPortrait:Writable<CMSTypes.Media | null> = writable(null);
 	let iOverlayLandscape:Writable<CMSTypes.Media | null> = writable(null);
 
@@ -37,6 +38,7 @@
 				logo: $iLogo?.id,
 				date: $iDateString.toString(),
 				location: $iLocation,
+				heroImage: $iHeroImage?.id,
 				overlayImagePortrait: $iOverlayPortrait?.id,
 				overlayImageLandscape: $iOverlayLandscape?.id,
 				ctaText: $ctaText,
@@ -79,6 +81,11 @@
 			iLocation.set($data.location);
 		} else {
 			// console.error("No location found");
+		}
+		if($data.heroImage){
+			iHeroImage.set($data.heroImage as CMSTypes.Media);
+		} else {
+			// console.error("No heroImage found");
 		}
 		if($data.overlayImagePortrait){
 			iOverlayPortrait.set($data.overlayImagePortrait as CMSTypes.Media);
@@ -151,6 +158,10 @@
 				<div class="form-field field-stack">
 					<label for="logo" class="p-2">Logo</label>
 					<ImageInput bind:currentMedia={iLogo} />
+				</div>
+				<div class="form-field field-stack">
+					<label for="hero" class="p-2">Hero Image</label>
+					<ImageInput bind:currentMedia={iHeroImage} />
 				</div>
 				<div class="form-field field-stack">
 					<label for="overlay" class="p-2">Overlay Landscape</label>

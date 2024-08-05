@@ -19,13 +19,15 @@ export namespace CMSTypes {
         logo?: string | Media | null;
         date?: string | null;
         location?: string | null;
-        overlayImage?: string | Media | null;
+        heroImage: string | Media | null;
+        overlayImagePortrait?: string | Media | null;
+        overlayImageLandscape?: string | Media | null;
         ctaText?: string | null;
-        ctaMedia?: string | Media | null;
-        ctaUrl?: string | null;
+        ctaImage?: string | Media | null;
+        ctaLink?: string | null;
         ctaAltText?: string | null;
-        ctaAltMedia?: string | Media | null;
-        ctaAltUrl?: string | null;
+        ctaAltImage?: string | Media | null;
+        ctaAltLink?: string | null;
         updatedAt?: string | null;
         createdAt?: string | null;
     }

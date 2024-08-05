@@ -12,7 +12,7 @@
 	import SponsorBox from "./Components/SponsorBox.svelte";
 
     const mapView = () => {
-        ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpciture, {});
+        ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpicture, {});
     };
 
 </script>
