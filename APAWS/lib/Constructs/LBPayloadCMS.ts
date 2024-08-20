@@ -5,19 +5,24 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as docdb from 'aws-cdk-lib/aws-docdb';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import { Construct } from 'constructs';
 
 interface LBPayloadCMSProps extends cdk.StackProps {
   containerImage: string;
   name: string;
   tags?: { [key: string]: string };
-  vpc?: ec2.Vpc;
+  vpc: ec2.Vpc;
   cluster?: ecs.Cluster;
   bucketProps?: s3.BucketProps;
   taskMemoryLimitMiB?: number;
   taskCpuUnits?: number;
   containerPort?: number;
   desiredCount?: number;
+  certificate: acm.ICertificate;
+  mediaIngressBucket?: s3.Bucket;
+  processedBucket?: s3.Bucket;
+  environment?: { [key: string]: string };
 }
 
 export class LBPayloadCMS extends Construct {
@@ -53,6 +58,7 @@ export class LBPayloadCMS extends Construct {
     this.bucket = new s3.Bucket(this, `${name}PayloadCMSBucket`, {
       ...bucketProps,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true
     });
 
     // VPC
@@ -71,6 +77,35 @@ export class LBPayloadCMS extends Construct {
       ],
     });
 
+    // Allow payload to access mediaIngressBucket
+    if(props.mediaIngressBucket) {
+      executionRole.addToPolicy(new iam.PolicyStatement({
+        actions: [
+          's3:GetObject',
+          's3:PutObject',
+          's3:ListBucket'
+        ],
+        resources: [
+          props.mediaIngressBucket.bucketArn,
+          `${props.mediaIngressBucket.bucketArn}/*`,
+        ]
+      }));
+    }
+    // Allow payload to access processedBucket
+    if(props.processedBucket) {
+      executionRole.addToPolicy(new iam.PolicyStatement({
+        actions: [
+          's3:GetObject',
+          's3:PutObject',
+          's3:ListBucket'
+        ],
+        resources: [
+          props.processedBucket.bucketArn,
+          `${props.processedBucket.bucketArn}/*`,
+        ]
+      }));
+    }
+    
     // DocumentDB to replace MongoDB
     const dbUsername = 'ddbadmin';
     const dbPassword = name + "dbadmin";
@@ -101,18 +136,42 @@ export class LBPayloadCMS extends Construct {
       executionRole: executionRole,
     });
 
+    if (props.mediaIngressBucket) {
+      const s3PolicyStatement = new iam.PolicyStatement({
+        actions: [
+          's3:GetObject',
+          's3:PutObject',
+          's3:ListBucket',
+          's3:GetBucketLocation',
+          's3:GetObjectAcl',
+        ],
+        resources: [
+          props.mediaIngressBucket.bucketArn,
+          `${props.mediaIngressBucket.bucketArn}/*`,
+        ],
+      });
+    
+      // Adding the policy to the task role
+      taskDefinition.taskRole.addToPrincipalPolicy(s3PolicyStatement);
+    }
+
+    
     const uri = 'mongodb://' + dbUsername + ':' + dbPassword + '@' + documentDB.clusterEndpoint.hostname + ':' + documentDB.clusterEndpoint.port + '/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&retryWrites=false';
 
+
+    const environment = {
+      DATABASE_URI: uri,
+      S3_BUCKET: this.bucket.bucketName,
+      INGRESS_S3_BUCKET: props.mediaIngressBucket ? props.mediaIngressBucket.bucketName : '',
+      PAYLOAD_SECRET: name + "-b53006edc",
+      ...props.environment,
+    }
     const container = taskDefinition.addContainer(`${name}PayloadCMSContainer`, {
       image: ecs.ContainerImage.fromRegistry(containerImage),
       memoryLimitMiB: taskMemoryLimitMiB,
       cpu: taskCpuUnits,
       logging: new ecs.AwsLogDriver({ streamPrefix: name + 'PayloadCMSContainer' }),
-      environment: {
-        DATABASE_URI: uri,
-        S3_BUCKET: this.bucket.bucketName,
-        PAYLOAD_SECRET: name + "-b53006edc"
-      },
+      environment: environment,
     });
 
     container.addPortMappings({
@@ -124,7 +183,7 @@ export class LBPayloadCMS extends Construct {
       cluster: this.cluster,
       taskDefinition: taskDefinition,
       desiredCount: desiredCount,
-      healthCheckGracePeriod: cdk.Duration.seconds(30),
+      healthCheckGracePeriod: cdk.Duration.seconds(10),
       assignPublicIp: true, // while debugging
       securityGroups: [ecsSecurityGroup],
     });
@@ -135,18 +194,30 @@ export class LBPayloadCMS extends Construct {
       internetFacing: true,
     });
 
-    const listener = this.loadBalancer.addListener(`${name}PublicListener`, {
+    const httpsListener = this.loadBalancer.addListener(`${name}PayloadCMSHttpsListener`, {
+      port: 443,
+      open: true,
+      certificates: [props.certificate],
+    });
+    
+    //Redirect HTTP to HTTPS
+    this.loadBalancer.addListener(`${name}PayloadCMSHttpListener`, {
       port: 80,
       open: true,
-    });
+      defaultAction: elbv2.ListenerAction.redirect({
+        protocol: 'HTTPS',
+        port: '443',
+        permanent: true,
+      }),
+    })
 
-    listener.addTargets(`${name}ECS`, {
+    httpsListener.addTargets(`${name}ECS`, {
       port: 80,
       targets: [this.service],
       healthCheck: {
         path: "/api/health",
-        interval: cdk.Duration.seconds(25),
-        timeout: cdk.Duration.seconds(20),
+        interval: cdk.Duration.seconds(10),
+        timeout: cdk.Duration.seconds(9),
         healthyThresholdCount: 2,
         unhealthyThresholdCount: 2,
         healthyHttpCodes: '200-399',

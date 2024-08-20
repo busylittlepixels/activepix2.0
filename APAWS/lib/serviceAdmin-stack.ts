@@ -5,7 +5,7 @@ import { Vpc } from 'aws-cdk-lib/aws-ec2';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export interface ServiceAdminStackProps extends cdk.StackProps {
-
+  subdomain: string;
 }
 export class ServiceAdminStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -17,6 +17,7 @@ export class ServiceAdminStack extends cdk.Stack {
     
     const eventInstanceProps = {
       name: 'APAWS_TEST_EVENT_INSTANCE',
+      subdomain: 'test',
       vpc: vpc
     }
     const stack = new EventInstanceStack(this, eventInstanceProps.name, eventInstanceProps);

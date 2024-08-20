@@ -1,5 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as sharp from 'sharp';
+// import cv2 from 'opencv4nodejs';
+import { DetectionStrategies } from './DetectionStrategies';
 
 const sizes: {
     size: number;
@@ -55,11 +57,24 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
     //Convert to PNG and fix orientation
     console.log('Performing rotation fix and conversion to PNG');
     let imageBuffer = await sharp(data).rotate().png().toBuffer();
+    let imageWidth = await sharp(data).metadata().then(metadata => metadata.width);
+    let imageHeight = await sharp(data).metadata().then(metadata => metadata.height);
+
+
+    if(!imageWidth || !imageHeight) {
+        return {
+            success: false,
+            message: 'Could not get image dimensions',
+        }
+    }
+
 
     //Process the image while generating sizes
     //to be implemented.
     let participantCodesPromise = getParticipantCodes({
-        ibuffer: imageBuffer
+        ibuffer: imageBuffer,
+        iWidth : imageWidth,
+        iHeight : imageHeight
     });
 
     //Generate sizes
@@ -77,6 +92,12 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
 
     //Save metadata
     console.log('Saving media metadata');
+    if(!(await participantCodesPromise).length) {
+        return {
+            success: false,
+            message: 'No participants detected in image',
+        }
+    }
     let metadataItem = {
         ingressKey: ctx.ingressKey,
         participantCodes: await participantCodesPromise,
@@ -168,11 +189,33 @@ async function generateImageSize(ctx: GenerateImageSizeContext): Promise<string>
     return key;
 }
 
+
+
+
+
+//DETECTION
+
 interface GetParticipantCodesContext {
     ibuffer: Buffer;
+    iWidth: number;
+    iHeight: number;
 }
-async function getParticipantCodes(ctx: GetParticipantCodesContext): Promise<number[]> {
-    // Do the OCR here.
-    // Return the participant codes.
-    return [1,2,3,4,5];
+
+export async function getParticipantCodes(ctx: GetParticipantCodesContext): Promise<number[]> {
+    let detectionStrategy:keyof typeof DetectionStrategies = "alpha"
+    console.log('Running detection strategy :' + detectionStrategy);
+    const detectionResult = await DetectionStrategies[detectionStrategy]({
+        iBuffer: ctx.ibuffer,
+        iWidth: ctx.iWidth,
+        iHeight: ctx.iHeight,
+    });
+
+    if (!detectionResult.success) {
+        console.log('Detection failed:', detectionResult);
+        throw new Error('Detection failed');
+    }
+
+    let participantCodes = Object.keys(detectionResult.data ?? []).map(key => parseInt(key));
+    console.log('Detected participant codes:', participantCodes);
+    return participantCodes;
 }

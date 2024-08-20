@@ -53,6 +53,11 @@ export async function getMe(): Promise<void> {
     });
 }
 
+export async function isAuthed(): Promise<boolean> {
+    await initAuthStore();
+    return get(AuthStore) !== null;
+}
+
 export async function login(email: string, password: string): Promise<boolean> {
     const response = await fetch(Endpoints.cms.users.login, {
         method: 'POST',

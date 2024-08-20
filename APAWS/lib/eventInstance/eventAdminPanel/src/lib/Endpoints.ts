@@ -1,13 +1,22 @@
-let galleryDataBaseUrl: string = 'https://tlpgy1dm41.execute-api.eu-west-1.amazonaws.com/prod';
+import { env } from '$env/dynamic/public'
 
-let cmsBaseURL: string = "http://localhost:80/api";
-let cmsFileBaseURL: string = "http://localhost:80";
+let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN+'/prod';
+
+let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN + '/api';
+let cmsFileBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
+if(cmsBaseURL.includes('localhost')) {
+    cmsBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN + '/api';
+    cmsFileBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN;
+}
 export const Endpoints = {
     galleryData: {
         baseUrl: galleryDataBaseUrl,
         forParticipant: galleryDataBaseUrl + '/forParticipant',
     },
     cms: {
+        base: cmsBaseURL,
+        // getUploadUrls: 'https://cms.test.races.activepix.com' + '/api/getUploadUrls',
+        getUploadUrls: cmsBaseURL + '/getUploadUrls',
         users: {
             base: cmsBaseURL + '/users',
             login: cmsBaseURL + '/users/login',

@@ -17,6 +17,20 @@ participant code in the format: [
  */
 export const handler = async (event: APIGatewayEvent) => {
 
+
+    // Check if it's an OPTIONS request
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: ''
+        }   
+    }
+
     //Setup context
     const ddb = new AWS.DynamoDB()
     const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
@@ -46,7 +60,12 @@ export const handler = async (event: APIGatewayEvent) => {
             statusCode: 400,
             body: JSON.stringify({
                 message: 'Invalid request body'
-            })
+            }),
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            }
         }
     }
 
@@ -57,7 +76,12 @@ export const handler = async (event: APIGatewayEvent) => {
             statusCode: 400,
             body: JSON.stringify({
                 message: 'participantCode is required'
-            })
+            }),
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            }
         }
     }
 
@@ -80,18 +104,23 @@ export const handler = async (event: APIGatewayEvent) => {
             statusCode: 500,
             body: JSON.stringify({
                 message: 'Failed to query metadata table'
-            })
+            }),
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            }
         }
     }
 
     //Process the participantQueryResult
     let items = participantQueryResult.Items || [];
     
-    let responseItems = items.map(item => {
+    let responseItems = await Promise.all(items.map(async (item) => {
         const ingressKeysForParticipant = item.ingressKeys.SS || [];
         //For each key, query the image metadata table and return an object:
         //Query for the image metadata
-        return ingressKeysForParticipant.map(async key => {
+        return await Promise.all(ingressKeysForParticipant.map(async key => {
             let imageMetadataQueryResult;
             try {
                 imageMetadataQueryResult = await ddb.getItem({
@@ -124,12 +153,18 @@ export const handler = async (event: APIGatewayEvent) => {
                 thumbnail: `https://${PROCESSED_BUCKET}.s3.amazonaws.com/${thumbnailKey}`,
                 large: `https://${PROCESSED_BUCKET}.s3.amazonaws.com/${fullsizeKey}`
             }
-        })
-    })
-    console.log('Successfully processed request', responseItems);
+        }))
+    }))
+    //return first item, incase theres two instances of the same participant in the db. There shouldn't be.
+    console.log('Successfully processed request', responseItems[0]);
     return {
         statusCode: 200,
-        body: JSON.stringify(responseItems)
+        body: JSON.stringify(responseItems[0]),
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
     }
     
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
 
     import type { ThemedGalleryData } from "$lib/EventTypes";
+	import { MiscHelpers } from "$lib/MiscHelpers";
 
     export let galleryData:ThemedGalleryData;
 
@@ -15,7 +16,7 @@
     {#if (galleryData)}
     <div class="flex flex-col w-full mb-4">
         <p class="Header">{galleryData.galleryConfig.title}</p>
-        <p>{galleryData.galleryConfig.location} |  {galleryData.galleryConfig.date}</p>
+        <p>{galleryData.galleryConfig.location} | {MiscHelpers.niceDate(galleryData.galleryConfig.date)}</p>
     </div>
     {:else}
     <div>
@@ -52,7 +53,8 @@
     .gallery-image {
         flex: 1 1 300px;
         border-radius: 10px;
-        padding: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
         object-fit: cover;  
     }
 

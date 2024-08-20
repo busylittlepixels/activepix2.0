@@ -1,0 +1,1 @@
+<h1> Generating magic auth codes goes here.</h1>

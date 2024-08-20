@@ -1,7 +1,19 @@
-let galleryDataBaseUrl: string = 'https://tlpgy1dm41.execute-api.eu-west-1.amazonaws.com/prod';
+let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN;
 
+//if galleryData ends with '/' remove it
+if(galleryDataBaseUrl.endsWith('/')) {
+    galleryDataBaseUrl = galleryDataBaseUrl.slice(0, -1);
+}
 
-let cmsBaseURL: string = "http://localhost:80";
+if(process.env.NODE_ENV !== 'production') {
+    galleryDataBaseUrl = 'https://du8miflkuf.execute-api.eu-west-1.amazonaws.com/prod/';
+}
+import { env } from '$env/dynamic/public'
+
+let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
+if(cmsBaseURL.includes('localhost')) {
+    cmsBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN;
+}
 export const Endpoints = {
     galleryData: {
         baseUrl: galleryDataBaseUrl,

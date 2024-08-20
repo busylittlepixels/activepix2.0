@@ -10,6 +10,8 @@ export namespace EventData {
         if(alternateFetch){
             fetcher = alternateFetch;
         }
+        console.log('Fetching images for participant', participantCode);
+        console.log('Fetching from', Endpoints.galleryData.forParticipant);
         const response = await fetcher(Endpoints.galleryData.forParticipant, {
             method: 'POST',
             headers: {

@@ -5,18 +5,21 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as docdb from 'aws-cdk-lib/aws-docdb';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import { Construct } from 'constructs';
 
 interface LBSveltekitProps extends cdk.StackProps {
   containerImage: string;
   name: string;
   tags?: { [key: string]: string };
-  vpc?: ec2.Vpc;
+  vpc: ec2.Vpc;
   cluster?: ecs.Cluster;
   taskMemoryLimitMiB?: number;
   taskCpuUnits?: number;
   containerPort?: number;
   desiredCount?: number;
+  certificate: acm.ICertificate;
+  environment?: { [key: string]: string };
 }
 
 export class LBSveltekit extends Construct {
@@ -68,15 +71,18 @@ export class LBSveltekit extends Construct {
       cpu: taskCpuUnits,
       executionRole: executionRole,
     });
+
+    let environment = {
+      PORT: '80',
+      NODE_ENV: 'production',
+      ...props.environment,
+    };
     const container = taskDefinition.addContainer(`${name}Container`, {
       image: ecs.ContainerImage.fromRegistry(containerImage),
       memoryLimitMiB: taskMemoryLimitMiB,
       cpu: taskCpuUnits,
       logging: new ecs.AwsLogDriver({ streamPrefix: name }),
-      environment: {
-        PORT: '80',
-        NODE_ENV: 'production',
-      },
+      environment: environment,
     });
 
     container.addPortMappings({
@@ -98,16 +104,28 @@ export class LBSveltekit extends Construct {
       internetFacing: true,
     });
 
-    const listener = this.loadBalancer.addListener(`${name}PublicListener`, {
-      port: 80,
+    const httpsListener = this.loadBalancer.addListener(`${name}HttpsListener`, {
+      port: 443,
       open: true,
+      certificates: [props.certificate],
     });
 
-    listener.addTargets(`${name}ECS`, {
+    //Redirect HTTP to HTTPS
+    this.loadBalancer.addListener(`${name}HttpListener`, {
+      port: 80,
+      open: true,
+      defaultAction: elbv2.ListenerAction.redirect({
+        protocol: 'HTTPS',
+        port: '443',
+        permanent: true,
+      }),
+    })
+
+    httpsListener.addTargets(`${name}ECS`, {
       port: 80,
       targets: [this.service],
       healthCheck: {
-        path: "/api/health",
+        path: "/",
         interval: cdk.Duration.seconds(25),
         timeout: cdk.Duration.seconds(20),
         healthyThresholdCount: 2,

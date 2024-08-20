@@ -6,6 +6,8 @@
 	import { getAuthHeader } from "$lib/Authentication";
 	import { Endpoints } from "$lib/Endpoints";
 	import ImageInput from "./ImageInput.svelte";
+	import {env} from "$env/dynamic/public";
+	import { PUBLIC_INGRESS_DOMAIN } from "$env/static/public";
 	
 	let loading = true;
 	let data:Writable<CMSTypes.Galleryconfig | null> = writable(null)
@@ -132,16 +134,23 @@
 
 		loading = false;
 	});
+
 </script>
-<div class="header">
-	<button class="btn btn-primary text-white" on:click={logout}>Logout</button>
-</div>
 {#if loading}
 	Loading...
 {:else}
 	{#if $data}
 		<form class="form p-2" on:submit={handleSubmit}>
 			<div class="form-column">
+				<h1>Overview</h1>
+				<div class="form-field field-stack">
+					<div class="flex flex-row"><p>
+						<strong>S3 Bucket URL:</strong> <em>https://{env.PUBLIC_INGRESS_DOMAIN}</em><br/>
+						<strong>Gallery URL:</strong> <em>https://{env.PUBLIC_GALLERY_DOMAIN}</em><br/>
+						<strong>Admin URL:</strong> <em>https://{env.PUBLIC_ADMIN_DOMAIN}</em><br/>
+						<strong>CMS URL:</strong> <em>https://{env.PUBLIC_CMS_DOMAIN}</em><br/>
+					</p></div>
+				</div>
 				<h1>Basic Information</h1>
 				<div class="form-field field-stack">
 					<label for="title" class="p-2">Title</label>

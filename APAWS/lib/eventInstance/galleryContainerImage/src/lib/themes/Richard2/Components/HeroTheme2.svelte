@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ThemedGalleryData } from "$lib/EventTypes";
     import { Endpoints } from "$lib/Endpoints";
+	import { MiscHelpers } from "$lib/MiscHelpers";
 
     export let galleryData : ThemedGalleryData
 
@@ -8,11 +9,11 @@
 
 <div class="HeroWrapper flex w-full">
     {#if (galleryData)}
-        <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.overlayImage?.url}');">
+        <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.heroImage?.url}');">
             {#if (galleryData.galleryConfig.ctaText)}
                 <div class="textOverlay w-full h-full items-center justify-center flex flex-col">
                     <p class="text-4xl"><span class="text-yellow-400">{galleryData.galleryConfig.title}</span></p>
-                    <p class="text-2xl"><span class="text-yellow-400">{galleryData.galleryConfig.date}</span></p>
+                    <p class="text-2xl"><span class="text-yellow-400">{MiscHelpers.niceDate(galleryData.galleryConfig.date)}</span></p>
                     <div class="flex flex-row items-center">
                         <div class="icon-sizing">
                             <svg width="2rem" height="2rem" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

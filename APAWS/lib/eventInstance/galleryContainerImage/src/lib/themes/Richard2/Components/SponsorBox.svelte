@@ -2,27 +2,30 @@
 	import type { ThemedGalleryData } from "$lib/EventTypes";
     import { Endpoints } from "$lib/Endpoints";
 
-    export let galleryData : ThemedGalleryData
+    // export let galleryData : ThemedGalleryData
+    export let ctaData: {
+        ctaText: string,
+        ctaImage: string
+        ctaHref: string
+    }
 
 </script>
-<div class="sponsorWrapper flex w-full">
-    {#if (galleryData)}
-        <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.ctaImage?.url}');">
-            {#if (galleryData.galleryConfig.ctaText)}
+<a class="sponsorWrapper flex w-full" target="_blank" href="{ctaData.ctaHref}">
+    {#if (ctaData)}
+        <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{ctaData.ctaImage}');">
+            {#if (ctaData.ctaText)}
                 <div class="textOverlay w-full h-full items-center justify-center flex">
-                    <p>{galleryData.galleryConfig.ctaText}</p>
+                    <p>{ctaData.ctaText}</p>
                 </div>
             {/if}
         </div>
     {/if}
-</div>
+</a>
 
 
 <style lang="postcss">
 
     .sponsorWrapper {
-        padding-left: 5px;
-        padding-right: 5px;
         cursor: pointer;
         transition: all, 0.2s;
     }

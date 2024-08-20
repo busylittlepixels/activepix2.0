@@ -1,0 +1,17 @@
+{
+  "name": "processorcontainer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-batch": "^3.624.0",
+    "aws-sdk": "^2.1670.0",
+    "sharp": "^0.33.4"
+  }
+}

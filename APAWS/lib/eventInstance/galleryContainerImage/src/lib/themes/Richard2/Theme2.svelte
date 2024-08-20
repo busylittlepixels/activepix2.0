@@ -5,10 +5,11 @@
 
     import * as ModalManager from "$lib/ModalManager";
     import Topbar from "$lib/themes/Richard2/Components/Topbar.svelte"
-	  import Gallery from "./Components/Gallery.svelte";
+    import Gallery from "./Components/Gallery.svelte";
 	import HeroTheme2 from "./Components/HeroTheme2.svelte";
 	import ShareBar from "./Components/ShareBar.svelte";
 	import SponsorBox from "./Components/SponsorBox.svelte";
+    import {Endpoints} from "$lib/Endpoints";
 
     const mapView = () => {
         ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpicture, {});
@@ -16,7 +17,7 @@
 
 </script>
 <!-- Background code -->
-<pre>{JSON.stringify(galleryData, null, 2)}</pre>
+<!-- <pre>{JSON.stringify(galleryData, null, 2)}</pre> -->
 <div class="background w-full h-full"></div>
 <div class="stripe">
     <svg width="1920" height="865" viewBox="0 0 1920 865" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,11 +31,19 @@
 
    <ShareBar></ShareBar>
 
-    <SponsorBox {galleryData}></SponsorBox>
+    <SponsorBox ctaData={{
+        ctaHref: galleryData.galleryConfig.ctaLink,
+        ctaImage: Endpoints.cms.media.files + galleryData.galleryConfig.ctaImage?.url,
+        ctaText: galleryData.galleryConfig.ctaText
+    }}></SponsorBox>
 
     <Gallery {galleryData}></Gallery>
 
-    <SponsorBox {galleryData}></SponsorBox>
+    <SponsorBox ctaData={{
+        ctaHref: galleryData.galleryConfig.ctaAltLink,
+        ctaImage: Endpoints.cms.media.files + galleryData.galleryConfig.ctaAltImage?.url,
+        ctaText: galleryData.galleryConfig.ctaAltText
+    }}></SponsorBox>
 
 </div>
 

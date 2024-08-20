@@ -9,7 +9,11 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deployInstance": "npm run build && cdk deploy APAWS-EI-TEST --profile=rrharry-aa -vv"
+    "deployInstance": "npm run build && cdk deploy APAWS-EI-TEST --profile=rrharry-aa -vv --require-approval never",
+    "deployInstance1": "npm run build && cdk deploy APAWS-EI-TEST1 --profile=rrharry-aa -vv --require-approval never",
+    "deployInstance2": "npm run build && cdk deploy APAWS-EI-TEST2 --profile=rrharry-aa -vv --require-approval never",
+    "deployInstance3": "npm run build && cdk deploy APAWS-EI-TEST3 --profile=rrharry-aa -vv --require-approval never",
+    "deployRunclareTest": "npm run build && cdk deploy APAWS-EI-RUNCLARE --profile=rrharry-aa -vv --require-approval never"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

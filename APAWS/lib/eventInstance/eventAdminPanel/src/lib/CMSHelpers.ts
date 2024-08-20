@@ -1,4 +1,5 @@
 import * as qs from 'qs'
+import { Endpoints } from './Endpoints';
 export namespace CMSTypes {
     export type Media = {
         id: string;
@@ -48,6 +49,32 @@ export namespace CMSTypes {
       }
 }
 export namespace CMSHelpers {
+    export async function getSignedURLs (keys: string[]) : Promise<null | {
+        key: string,
+        url: string
+    }[]> {
+        let response = await fetch(Endpoints.cms.getUploadUrls, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({keys}),
+        })
+        if(response.status !== 200) {
+            console.log('Error fetching signed URLs', response.status)
+            return null
+        }
+        let data;
+        try {
+            data = await response.json()
+            console.log('Data received for signed urls:', data)
+        } catch (e) {
+            console.log('Error parsing signed URLs response', e)
+            return null
+        }
+
+        return data;
+    }
     export async function getParticipantData (participantCode: string) : Promise<null | {
         [key: string]: any
     }> {

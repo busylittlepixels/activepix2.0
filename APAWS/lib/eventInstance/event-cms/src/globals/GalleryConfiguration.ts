@@ -12,6 +12,16 @@ const GalleryConfiguration:GlobalConfig = {
             type: 'text',
         },
         {
+            name: 'detectionStrategy',
+            label: 'Detection Strategy',
+            type: 'select',
+            options: [
+                { label: 'Reccomended (Alpha)', value: 'alpha' },
+                { label: 'OCR', value: 'ocr' },
+            ],
+            defaultValue: 'alpha',
+        },
+        {
             name: 'logo',
             label: 'Logo',
             type: 'upload',
@@ -36,6 +46,12 @@ const GalleryConfiguration:GlobalConfig = {
         {
             name: 'overlayImagePortrait',
             label: 'Overlay Image Portrait',
+            type: 'upload',
+            relationTo: 'media',
+        },
+        {
+            name: 'heroImage',
+            label: 'Hero Image',
             type: 'upload',
             relationTo: 'media',
         },
