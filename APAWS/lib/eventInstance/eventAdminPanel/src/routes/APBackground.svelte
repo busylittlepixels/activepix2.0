@@ -15,12 +15,13 @@
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
+        overflow-y: hidden;
     }
     .bg-overlay {
         background-color: rgba(0, 0, 0, 0.65);
         height: 100%;
         width: 100%;
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         z-index: 0;
@@ -32,5 +33,6 @@
         width: 100%;
         height: 100%;
         z-index: 1;
+        overflow: auto;
     }   
 </style>
