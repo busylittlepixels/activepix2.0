@@ -1,5 +1,7 @@
 *.js
 !svelte.config.js
+!eslint.config.js
+!postcss.config.js
 !jest.config.js
 *.d.ts
 node_modules
