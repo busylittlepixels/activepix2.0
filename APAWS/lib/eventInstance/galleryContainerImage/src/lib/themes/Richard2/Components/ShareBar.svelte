@@ -12,7 +12,7 @@
 
 </script>
 
-<div class="flex flex-row justify-center items-center gap-6 mt-4 mb-4 w-full shareBox">
+<div class="flex flex-row justify-center items-center gap-6 w-full shareBox">
     <div class="flex">
         <p class="text-4x1 clickable">Share Gallery</p>
     </div>
@@ -34,6 +34,10 @@
         min-height: 4rem;
         border-radius: 7px;
         color: black;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1px;
+        font-size: 1.2rem;
     }
 
     .clickable {

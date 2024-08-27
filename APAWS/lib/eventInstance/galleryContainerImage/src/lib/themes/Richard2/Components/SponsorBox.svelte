@@ -13,7 +13,7 @@
 <a class="sponsorWrapper flex w-full" target="_blank" href="{ctaData.ctaHref}">
     {#if (ctaData)}
         <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{ctaData.ctaImage}');">
-            {#if (ctaData.ctaText)}
+            {#if (ctaData.ctaText && ctaData.ctaText !== "")}
                 <div class="textOverlay w-full h-full items-center justify-center flex">
                     <p>{ctaData.ctaText}</p>
                 </div>

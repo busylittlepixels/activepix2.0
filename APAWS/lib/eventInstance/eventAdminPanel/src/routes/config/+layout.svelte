@@ -14,8 +14,13 @@
         console.log("Destroying");
     });
 </script>
-{#if ($AuthStore?.user)}
-    <slot></slot>
-{:else}
-    <a href="/">Unauthorized, please click here to login.</a>
-{/if}
+<slot></slot>
+
+<style lang="postcss">
+    .wrapper {
+        @apply flex items-center justify-center h-screen;
+    }
+    .wrapper-inner {
+        @apply flex flex-col gap-4;
+    }
+</style>

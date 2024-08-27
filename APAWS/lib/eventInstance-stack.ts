@@ -456,6 +456,8 @@ export class EventInstanceStack extends cdk.Stack {
 
     scaling.scaleOnCpuUtilization('ProcessorServiceCpuScaling', {
         targetUtilizationPercent: 50,
-    });
+        scaleOutCooldown: cdk.Duration.seconds(60),
+        scaleInCooldown: cdk.Duration.seconds(120),
+    })
   }
 }

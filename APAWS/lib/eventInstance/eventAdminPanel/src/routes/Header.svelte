@@ -3,7 +3,7 @@
 	import { AuthStore, getMe, initAuthStore, isAuthed, logout } from "$lib/Authentication";
 
 </script>
-<div class="navbar bg-base-100">
+<div class="navbar appage-segment">
     <div class="navbar-start">
       <div class="dropdown">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
@@ -25,12 +25,13 @@
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
           <li><a href="/config">Configuration</a></li>
           <li><a href="/upload">Upload media</a></li>
+          <li><a href="/uploadParticipantData">Upload participant data</a></li>
           <li><a href="/statistics">Statistics</a></li>
         </ul>
       </div>
     </div>
     <div class="navbar-center">
-      <a href="/config" class="btn btn-ghost text-xl">daisyUI</a>
+      <a href="/config" class="logo"><img src="/logo.png" alt="logo"/></a>
     </div>
     <div class="navbar-end">
         {#await initAuthStore()}
@@ -45,3 +46,10 @@
         {/await}
     </div>
   </div>
+
+
+  <style lang="postcss">
+    .logo {
+      width: 120px;
+    }
+  </style>

@@ -180,7 +180,9 @@ interface GenerateImageSizeContext {
 async function generateImageSize(ctx: GenerateImageSizeContext): Promise<string> {
     // Do the image resizing here.
     // Return the new image data.
-    let ibuffer = sharp(ctx.ingressMediaData).resize(ctx.size, ctx.size).png({quality: 80}).toBuffer();
+    let ibuffer = sharp(ctx.ingressMediaData).resize(ctx.size, ctx.size, {
+        fit: 'inside',
+    }).png({quality: 70, force: true, compressionLevel: 8}).toBuffer();
     // Upload the new image to the processed bucket.
     let keyWithoutExtension = ctx.ingressMediaKey.split('.').slice(0, -1).join('.');
     let key = `${keyWithoutExtension}-${ctx.sizeName}.png`;

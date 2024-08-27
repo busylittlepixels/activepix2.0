@@ -19,7 +19,7 @@
 <ModalWrapper2 onBackgroundClick={closeThisModal}>
     <div class="mainSection">
         <!-- <pre>{JSON.stringify(data,null,2)}</pre> -->
-        <p class="header">File name</p>
+        <!-- <p class="header">File name</p> -->
         <img class="rounded" src={data.targetMedia.large} alt={data.targetMedia.ingress} />
     </div>
 
@@ -41,7 +41,9 @@
 </ModalWrapper2>
 
 <style lang="postcss">
-
+    .main-section{
+        padding-top: 65px;   
+    }
     .header {
         font-size: 2rem;
         color: white;
@@ -56,5 +58,9 @@
 
     .rounded {
         border-radius: 7px;
+        max-height: 70vh;
+        margin: auto;
+        width: auto;
+        max-width: 90vw;
     }
 </style>

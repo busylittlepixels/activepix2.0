@@ -44,10 +44,22 @@ new EventInstanceStack(app, 'APAWS-EI-STAGING', {
   env: env
 });
 
+new EventInstanceStack(app, 'APAWS-EI-TESTDEMO', {
+  name: 'APAWSEI-TESTDEMO',
+  subdomain: 'TESTDEMO',
+  env: env
+});
+
 //Set up runclare
 
 new EventInstanceStack(app, 'APAWS-EI-RUNCLARE', {
   name: 'APAWSEI-RUNCLARE',
   subdomain: 'runclare',
+  env: env
+});
+
+new EventInstanceStack(app, 'APAWS-EI-PADDY5K', {
+  name: 'APAWSEI-PADDY5K',
+  subdomain: 'paddy5k',
   env: env
 });

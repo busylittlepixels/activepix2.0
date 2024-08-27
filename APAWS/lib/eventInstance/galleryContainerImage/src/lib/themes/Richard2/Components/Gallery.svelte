@@ -25,7 +25,7 @@
     {/if}
     <div class="flex picture-boxes">
         {#if (galleryData?.media?.length > 0)}
-        <div class="gallery-container">
+        <div class="gallery-container gap-4">
             {#each galleryData.media as media}
                 <div class="gallery-image">
                     <img class="rounded" src={media.thumbnail} alt={media.ingress} on:click={()=>{pictureView(media)}}/>
@@ -74,9 +74,9 @@
     .gallery-image {
                 flex: auto;
                 border-radius: 10px;
-                padding: 7px;
+                /* padding: 7px; */
                 object-fit: cover;
-                width: 50%;
+                width: 45%;
             }
     }
 </style>

@@ -1,6 +1,6 @@
 <script>
 	import ModalArea from '$lib/modals/ModalArea.svelte';
-import '../app.css';
+	import '../app.css';
 </script>
 
 <slot></slot>

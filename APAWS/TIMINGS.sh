@@ -1,0 +1,5 @@
+TIMINGS
+files: 581 raw
+START: 18:36:30
+END: 18:54:36
+DURATION: 18m 6s

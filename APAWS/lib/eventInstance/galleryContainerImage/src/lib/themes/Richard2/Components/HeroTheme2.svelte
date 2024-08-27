@@ -6,13 +6,17 @@
     export let galleryData : ThemedGalleryData
 
 </script>
-
+<pre>{JSON.stringify(galleryData, null, 2)}</pre>
 <div class="HeroWrapper flex w-full">
     {#if (galleryData)}
         <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.heroImage?.url}');">
             {#if (galleryData.galleryConfig.ctaText)}
-                <div class="textOverlay w-full h-full items-center justify-center flex flex-col">
-                    <p class="text-4xl"><span class="text-yellow-400">{galleryData.galleryConfig.title}</span></p>
+                <div class="textOverlay w-full h-full items-center justify-center flex flex-col gap-2">
+                    <p class="text-4xl"><span class="text-yellow-400">{galleryData.galleryConfig.title}
+                        {#if (galleryData.participantData)}
+                            - {galleryData.participantData.firstName} {galleryData.participantData.lastName}
+                        {/if}
+                    </span></p>
                     <p class="text-2xl"><span class="text-yellow-400">{MiscHelpers.niceDate(galleryData.galleryConfig.date)}</span></p>
                     <div class="flex flex-row items-center">
                         <div class="icon-sizing">
@@ -36,8 +40,8 @@
 <style lang="postcss">
 
     .HeroWrapper {
-        padding-left: 5px;
-        padding-right: 5px;
+        /* padding-left: 5px; */
+        /* padding-right: 5px; */
         /* cursor: pointer; */
         transition: all, 0.2s;
     }
@@ -64,12 +68,14 @@
     .textOverlay {
         background-color: rgba(0, 0, 0, 0.404);
         color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     @media screen and (max-width:950px) {
         .sizing {
-        min-height: 200px;
-        max-height: 300px;
+        min-height: 320px;
+        max-height: 500px;
         border-radius: 10px;
         flex: auto;
         background-size: cover;

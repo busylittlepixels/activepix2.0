@@ -83,6 +83,6 @@ export async function logout(): Promise<void> {
             'Authorization': await getAuthHeader(),
         }
     });
-    AuthStore.set(null);
     localStorage.removeItem('token');
+    AuthStore.set(null);
 }

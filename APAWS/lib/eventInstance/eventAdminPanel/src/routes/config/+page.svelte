@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AuthStore, logout } from "$lib/Authentication";
+	import { AuthStore, isAuthed, logout } from "$lib/Authentication";
 	import type { CMSTypes } from "$lib/CMSHelpers";
 	import { onMount } from "svelte";
 	import { writable, type Writable } from "svelte/store";
@@ -8,6 +8,7 @@
 	import ImageInput from "./ImageInput.svelte";
 	import {env} from "$env/dynamic/public";
 	import { PUBLIC_INGRESS_DOMAIN } from "$env/static/public";
+	import { goto } from "$app/navigation";
 	
 	let loading = true;
 	let data:Writable<CMSTypes.Galleryconfig | null> = writable(null)

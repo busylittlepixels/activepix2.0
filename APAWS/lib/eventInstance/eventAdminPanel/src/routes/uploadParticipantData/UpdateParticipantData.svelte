@@ -4,6 +4,10 @@
 	import QueryString from "qs";
 	import { createEventDispatcher } from "svelte";
     
+    let totalToUpload = 0;
+    let currentlyUploaded = 0;
+    let isUploading = false;
+
     const dispatch = createEventDispatcher();
     type RacerDatum = {
         firstName:string,
@@ -79,6 +83,9 @@
     async function updateParticipantData() {
         const participantDataEndpoint = Endpoints.cms.participantData.base;
 
+        isUploading = true;
+        totalToUpload = Object.keys(loadedData).length;
+        currentlyUploaded = 0;
         //Loop through each participant and create/update the participant data
         for(let participantCode in loadedData) {
             //query for current participant data
@@ -105,7 +112,9 @@
                     },
                     body: JSON.stringify({
                         participantCode: participantCode,
-                        ...loadedData[participantCode]
+                        additionalData:{
+                            ...loadedData[participantCode]
+                        }
                     })
                 }).then(response => response.json());
                 if(response.errors?.length) {
@@ -122,14 +131,16 @@
                     },
                     body: JSON.stringify({
                         participantCode: participantCode,
-                        ...loadedData[participantCode]
+                        additionalData: {
+                            ...loadedData[participantCode]
+                        }
                     })
                 }).then(response => response.json());
                 if(response.errors?.length) {
                     fileErrors = response.errors.map((error:any) => 'Error creating participant data: ' + error.message);
                 }
             }
-
+            currentlyUploaded++;
         }
         
         // let response = await fetch(Endpoints.races + '/'+raceid, {
@@ -200,5 +211,9 @@
             </tbody>
         </table>
     {/if}
-    <button class="btn btn-primary" on:click={updateParticipantDataSubmitted}>Save participant data</button>
+    <button class="btn btn-primary" on:click={updateParticipantDataSubmitted}>Save participant data
+        {#if isUploading}
+        ({currentlyUploaded}/{totalToUpload})
+        {/if}
+    </button>
 </div>

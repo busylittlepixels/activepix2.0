@@ -7,6 +7,7 @@ let cmsFileBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
 if(cmsBaseURL.includes('localhost')) {
     cmsBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN + '/api';
     cmsFileBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN;
+    console.log('Using local CMS', cmsBaseURL);
 }
 export const Endpoints = {
     galleryData: {
