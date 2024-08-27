@@ -9,7 +9,7 @@
         // Login Tokens: /loginTokens
         { name: "Configuration", url: "/config" },
         { name: "Download Markers", url: "/downloadMarkers" },
-        { name: "Login Tokens", url: "/loginTokens" },
+        { name: "Authentication Codes", url: "/authcodes" },
         { name: "Upload media", url: "/uploadMedia" },
         { name: "Upload participant data", url: "/uploadParticipantData" },
         { name: "Statistics", url: "/statistics" },

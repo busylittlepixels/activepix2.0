@@ -1,0 +1,6 @@
+<script lang="ts">
+	import { goto } from "$app/navigation";
+	import { isAuthed } from "$lib/Authentication";
+	import { onMount } from "svelte";
+</script>
+<h1>Statistics go here.</h1>
