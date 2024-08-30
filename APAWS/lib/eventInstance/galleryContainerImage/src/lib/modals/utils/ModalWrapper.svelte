@@ -58,7 +58,7 @@
         max-width: 95%;
         max-height: 95%;
         overflow: auto;
-        min-width: 600px;
+        min-width: 200px;
         /* min-height: 400px; */
         position: relative;
     }

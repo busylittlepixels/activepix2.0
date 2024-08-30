@@ -6,17 +6,39 @@
     export let galleryData:ThemedGalleryData;
 
     import * as ModalManager from "$lib/ModalManager";
+	import OverlayedComponent from "./OverlayedComponent.svelte";
 
     const pictureView = (media:ThemedGalleryData['media'][0]) => {
         ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpicture, {targetMedia:media});
     };
 
+    let firstName: string = galleryData.participantData.firstName
+    let lastName: string = galleryData.participantData.lastName
+    let distance: string = galleryData.participantData.distance
+    let time: string = galleryData.participantData.time
+
+    let hasName: boolean = false
+    let hasDistance: boolean = false
+    let hasTime: boolean = false
+
+    if (firstName&&lastName) hasName = true
+    if (distance) hasDistance = true
+    if (time) hasTime = true 
+
 </script>
 <div class="flex flex-col">   
     {#if (galleryData)}
     <div class="flex flex-col w-full mb-4">
-        <p class="Header">{galleryData.galleryConfig.title}</p>
-        <p>{galleryData.galleryConfig.location} | {MiscHelpers.niceDate(galleryData.galleryConfig.date)}</p>
+        {#if (hasName)}
+            <p class="Header">{galleryData.galleryConfig.title} - {galleryData.participantData.firstName} {galleryData.participantData.lastName}</p>
+        {:else}
+            <p class="Header">{galleryData.galleryConfig.title}</p>
+        {/if}
+        {#if (hasDistance&&hasTime)}
+            <p>{galleryData.galleryConfig.location} | {MiscHelpers.niceDate(galleryData.galleryConfig.date)} - {galleryData.participantData.distance} Completed in {galleryData.participantData.time}</p>
+        {:else}
+            <p>{galleryData.galleryConfig.location} | {MiscHelpers.niceDate(galleryData.galleryConfig.date)}</p>
+        {/if}
     </div>
     {:else}
     <div>
@@ -28,7 +50,7 @@
         <div class="gallery-container gap-4">
             {#each galleryData.media as media}
                 <div class="gallery-image">
-                    <img class="rounded" src={media.thumbnail} alt={media.ingress} on:click={()=>{pictureView(media)}}/>
+                    <OverlayedComponent{}></OverlayedComponent>
                 </div>
             {/each}
         </div>
