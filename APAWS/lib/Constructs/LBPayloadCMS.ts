@@ -105,6 +105,8 @@ export class LBPayloadCMS extends Construct {
         ]
       }));
     }
+    // Allow payload to access this.bucket
+    this.bucket.grantReadWrite(executionRole);
     
     // DocumentDB to replace MongoDB
     const dbUsername = 'ddbadmin';
@@ -161,6 +163,7 @@ export class LBPayloadCMS extends Construct {
 
     const environment = {
       DATABASE_URI: uri,
+      S3_REGION: cdk.Stack.of(this).region,
       S3_BUCKET: this.bucket.bucketName,
       INGRESS_S3_BUCKET: props.mediaIngressBucket ? props.mediaIngressBucket.bucketName : '',
       PAYLOAD_SECRET: name + "-b53006edc",

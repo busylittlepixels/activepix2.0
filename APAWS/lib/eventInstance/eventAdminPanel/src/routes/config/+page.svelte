@@ -237,7 +237,7 @@
 		align-self: stretch;
 	}
 	.form-field {
-		@apply shadow-lg bg-zinc-600 mt-2 p-2 rounded-sm;
+		@apply mt-2 p-2 rounded-sm;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;

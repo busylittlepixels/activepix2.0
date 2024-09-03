@@ -15,7 +15,7 @@ import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { LBSveltekit } from './Constructs/LBSveltekit';
-import { EventInstanceProcessingStack } from './eiProcessing-stack';
+// import { EventInstanceProcessingStack } from './eiProcessing-stack';
 import path = require('path');
 export interface EventInstanceStackProps extends cdk.StackProps {
   // Define construct properties here
@@ -134,7 +134,22 @@ export class EventInstanceStack extends cdk.Stack {
     ParticipantMetadataTable.grantReadData(LGetMediaForParticipant);
     ProcessedImageMetadataTable.grantReadData(LGetMediaForParticipant);
 
+    //Handles getting and setting participants on a given media key.
+    const LManageMedia = new lambda.Function(this, namepfx + 'LManageMedia', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LManageMedia'),
+      environment: {
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+        PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+      },
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 256,
+    });
     
+    // Grant the Lambda function necessary permissions
+    ProcessedImageMetadataTable.grantReadWriteData(LManageMedia);
+    ParticipantMetadataTable.grantReadData(LManageMedia);
 
     
 
@@ -148,6 +163,40 @@ export class EventInstanceStack extends cdk.Stack {
     const participant = api.root.addResource('forParticipant');
     participant.addMethod('POST');
 
+    const manageMediaResource =  api.root.addResource('manageMedia');
+
+    // Add GET and POST methods to the resource
+    manageMediaResource.addMethod('GET', new cdk.aws_apigateway.LambdaIntegration(LManageMedia));  // GET method for fetching media
+    manageMediaResource.addMethod('POST', new cdk.aws_apigateway.LambdaIntegration(LManageMedia)); // POST method for managing media
+
+    // Optionally, add CORS support if required
+    manageMediaResource.addMethod('OPTIONS', new cdk.aws_apigateway.MockIntegration({
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,POST'",
+        },
+      }],
+      passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
+      requestTemplates: {
+        'application/json': '{"statusCode": 200}'
+      },
+    }), {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Origin': true,
+          'method.response.header.Access-Control-Allow-Methods': true,
+        },
+      }]
+    });
+
+
+
+
     // Define IAM Role for PayloadCMS ECS Task
     const payloadCMSTaskRole = new iam.Role(this, namepfx + 'ECSTaskRole', {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
@@ -155,6 +204,10 @@ export class EventInstanceStack extends cdk.Stack {
     });
 
     // Attach S3 permissions to the role
+    // MediaIngressBucket.grantReadWrite(payloadCMSTaskRole);
+    // ProcessedBucket.grantReadWrite(payloadCMSTaskRole);
+    // ProcessedImageMetadataTable.grantReadWriteData(payloadCMSTaskRole);
+    // ParticipantMetadataTable.grantReadWriteData(payloadCMSTaskRole);
 
     // Create the Loadbalanced PayloadCMS construct
     this.EventInstanceCMS = new LBPayloadCMS(this, namepfx + 'LBPayloadCMS', {

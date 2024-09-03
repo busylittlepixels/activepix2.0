@@ -5,7 +5,29 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { slateEditor } from '@payloadcms/richtext-slate'
 import { buildConfig } from 'payload/config'
+import { cloudStorage } from '@payloadcms/plugin-cloud-storage'
+import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
 import dotenv from 'dotenv'
+dotenv.config()
+
+console.log({
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+  S3_REGION: process.env.S3_REGION,
+  S3_BUCKET: process.env.S3_BUCKET,
+});
+const adapter = s3Adapter({
+  config: {
+    // credentials: {
+    //   accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    //   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    // },
+    region: process.env.S3_REGION,
+    // ... Other S3 configuration
+  },
+  bucket: process.env.S3_BUCKET,
+})
+
 
 import Users from './collections/Users'
 import GalleryConfiguration from './globals/GalleryConfiguration'
@@ -13,7 +35,6 @@ import Media from './collections/Media'
 import ParticipantData from './collections/ParticipantData'
 
 
-dotenv.config()
 
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
@@ -48,7 +69,17 @@ export default buildConfig({
   graphQL: {
     schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
   },
-  plugins: [payloadCloud()],
+  plugins: [
+    payloadCloud(),
+    cloudStorage({
+      enabled: process.env.NODE_ENV === 'production',
+      collections: {
+        'media': {
+          adapter: adapter, // see docs for the adapter you want to use
+        },
+      },
+    }),
+  ],
   db: mongooseAdapter({
     url: process.env.DATABASE_URI,
     
@@ -99,5 +130,6 @@ export default buildConfig({
       },
     }
   ],
-  cors: '*'
+  cors: '*',
+  // csrf: 
 })

@@ -1,4 +1,4 @@
-let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN;
+let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN ?? ""
 
 //if galleryData ends with '/' remove it
 if(galleryDataBaseUrl.endsWith('/')) {
