@@ -6,7 +6,7 @@ if(galleryDataBaseUrl.endsWith('/')) {
 }
 
 if(process.env.NODE_ENV !== 'production') {
-    galleryDataBaseUrl = 'https://du8miflkuf.execute-api.eu-west-1.amazonaws.com/prod/';
+    galleryDataBaseUrl = 'https://d9l1tauhad.execute-api.eu-west-1.amazonaws.com/prod/';
 }
 import { env } from '$env/dynamic/public'
 

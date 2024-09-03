@@ -6,7 +6,7 @@
     export let galleryData : ThemedGalleryData
 
 </script>
-<pre>{JSON.stringify(galleryData, null, 2)}</pre>
+<!-- <pre>{JSON.stringify(galleryData, null, 2)}</pre> -->
 <div class="HeroWrapper flex w-full">
     {#if (galleryData)}
         <div class="w-full flex sizing flex-col justify-center" style="background-image: url('{Endpoints.cms.media.files}{galleryData.galleryConfig.heroImage?.url}');">

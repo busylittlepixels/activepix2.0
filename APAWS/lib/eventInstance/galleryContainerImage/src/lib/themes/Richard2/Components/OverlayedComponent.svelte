@@ -11,13 +11,24 @@
     let fullURL = urlPart1 + urlPart2
 </script> 
 
-<div class="w-full">
+<div class="oi-wrapper w-full">
     <img class="rounded" src={data.targetMedia.large} alt={data.targetMedia.ingress} />
     <img class="rounded overlayed" src={Endpoints.cms.media.files + galleryData.galleryConfig.overlayImageLandscape?.url}/>
 </div>
 
 <style>
+    .oi-wrapper {
+        position: relative;
+    }
     .overlayed {
-        position: fixed;
+        position: absolute;
+        bottom: 0;
+        /*Horizontal center*/
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
     }
 </style>

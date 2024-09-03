@@ -50,7 +50,9 @@
         <div class="gallery-container gap-4">
             {#each galleryData.media as media}
                 <div class="gallery-image">
-                    <OverlayedComponent{}></OverlayedComponent>
+                    <OverlayedComponent data={{
+                        targetMedia: media
+                    }} galleryData={galleryData}></OverlayedComponent>
                 </div>
             {/each}
         </div>
