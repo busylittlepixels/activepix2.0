@@ -104,7 +104,7 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
     const params = {
         TableName: ctx.imageMetadataTable,
         Limit: limit,
-        ExclusiveStartKey: lastEvaluatedKey ? { key: lastEvaluatedKey } : undefined,
+        ExclusiveStartKey: lastEvaluatedKey ? { ingressKey: lastEvaluatedKey } : undefined,
     };
 
     const result = await ddb.scan(params).promise();
@@ -112,12 +112,13 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
     const response = {
         media: result.Items?.map((item: any) => {
             return {
-                key: item.key,
-                thumbnail: `https://${ctx.processedBucket}.s3.amazonaws.com/${item.thumbnail}`,
-                large: `https://${ctx.processedBucket}.s3.amazonaws.com/${item.large}`,
+                ingressKey: item.ingressKey,
+                thumbnail: `https://${ctx.processedBucket}.s3.amazonaws.com/${item.thumbnailKey}`,
+                fullsize: `https://${ctx.processedBucket}.s3.amazonaws.com/${item.fullsizeKey}`,
+                participantCodes: item.participantCodes,
             };
         }) || [],
-        lastEvaluatedKey: result.LastEvaluatedKey ? result.LastEvaluatedKey.key : undefined,
+        lastEvaluatedKey: result.LastEvaluatedKey ? result.LastEvaluatedKey.ingressKey : undefined,
     };
 
         

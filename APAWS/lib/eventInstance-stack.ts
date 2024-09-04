@@ -142,6 +142,8 @@ export class EventInstanceStack extends cdk.Stack {
       environment: {
         IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
         PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        PROCESSED_BUCKET: ProcessedBucket.bucketName,
+        INGRESS_BUCKET: MediaIngressBucket.bucketName,
       },
       timeout: cdk.Duration.seconds(10),
       memorySize: 256,
