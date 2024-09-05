@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import ModalArea from '$lib/modals/ModalArea.svelte';
 	async function checkAuth() {
 		let Authed = await isAuthed();
 		if(!Authed) {
@@ -58,7 +59,7 @@
 {:catch error}
   <p>Error checking authentication</p>
 {/await}
-
+<ModalArea/>
 
 <style lang="postcss">
 	.content {

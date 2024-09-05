@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/public'
 
-let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN+'/prod';
+let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN//+'/prod';
 
 let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN + '/api';
 let cmsFileBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
@@ -13,6 +13,7 @@ export const Endpoints = {
     galleryData: {
         baseUrl: galleryDataBaseUrl,
         forParticipant: galleryDataBaseUrl + '/forParticipant',
+        manageMedia: galleryDataBaseUrl + '/manageMedia',
     },
     cms: {
         base: cmsBaseURL,

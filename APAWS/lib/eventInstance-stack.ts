@@ -151,7 +151,7 @@ export class EventInstanceStack extends cdk.Stack {
     
     // Grant the Lambda function necessary permissions
     ProcessedImageMetadataTable.grantReadWriteData(LManageMedia);
-    ParticipantMetadataTable.grantReadData(LManageMedia);
+    ParticipantMetadataTable.grantReadWriteData(LManageMedia);
 
     
 

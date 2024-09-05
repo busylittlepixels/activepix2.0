@@ -133,16 +133,6 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
 const handlePost = async (ctx: HandlerContext): Promise<APIGatewayProxyResult> => {
     const body = JSON.parse(ctx.event.body || '{}');
 
-    // Expects:
-    // {
-    //     key: <string>
-    //     participantCodes: [ <string> ]
-    // }
-    // Returns:
-    // {
-    //     key: <string>
-    //     participantCodes: [ <string> ]
-    // }
     const key = body.key;
     const participantCodes = body.participantCodes;
 
@@ -156,22 +146,24 @@ const handlePost = async (ctx: HandlerContext): Promise<APIGatewayProxyResult> =
 
     const ddb = new AWS.DynamoDB.DocumentClient();
 
-    // 1. Fetch the existing participantCodes from the imageMetadataTable
+    // 1. Fetch the existing participantCodes (String Set) from the imageMetadataTable
     const getParams = {
         TableName: ctx.imageMetadataTable,
-        Key: { key }
+        Key: { ingressKey: key },
     };
 
     const getResult = await ddb.get(getParams).promise();
-    const oldParticipantCodes = getResult.Item?.participantCodes || [];
 
-    // 2. Update the imageMetadataTable with the new participantCodes
+    // Convert oldParticipantCodes set to an array
+    const oldParticipantCodes:string[] = getResult.Item?.participantCodes ? Array.from(getResult.Item.participantCodes) : [];
+
+    // 2. Update the imageMetadataTable with the new participantCodes (still as a set)
     const updateImageMetadataParams = {
         TableName: ctx.imageMetadataTable,
-        Key: { key },
+        Key: { ingressKey: key },
         UpdateExpression: 'SET participantCodes = :newCodes',
         ExpressionAttributeValues: {
-            ':newCodes': participantCodes,
+            ':newCodes': ddb.createSet(participantCodes), // Store as a set
         },
         ReturnValues: 'ALL_NEW',
     };
@@ -184,7 +176,7 @@ const handlePost = async (ctx: HandlerContext): Promise<APIGatewayProxyResult> =
         .map((code: string) => {
             const removeParams = {
                 TableName: ctx.participantMetadataTable,
-                Key: { participantCode: code },
+                Key: { participantCode: Number(code) },  // Ensure correct type
                 UpdateExpression: 'DELETE ingressKeys :key',
                 ExpressionAttributeValues: {
                     ':key': ddb.createSet([key]),
@@ -198,7 +190,7 @@ const handlePost = async (ctx: HandlerContext): Promise<APIGatewayProxyResult> =
         .map((code: string) => {
             const addParams = {
                 TableName: ctx.participantMetadataTable,
-                Key: { participantCode: code },
+                Key: { participantCode: Number(code) },  // Ensure correct type
                 UpdateExpression: 'ADD ingressKeys :key',
                 ExpressionAttributeValues: {
                     ':key': ddb.createSet([key]),
@@ -215,11 +207,12 @@ const handlePost = async (ctx: HandlerContext): Promise<APIGatewayProxyResult> =
         statusCode: 200,
         headers: defaultHeaders(),
         body: JSON.stringify({
-            key: updateImageMetadataResult.Attributes?.key,
-            participantCodes: updateImageMetadataResult.Attributes?.participantCodes,
+            key: updateImageMetadataResult.Attributes?.ingressKey,
+            participantCodes: body.participantCodes,
         }),
     };
 };
+
 
 
 // Helper function to define default headers (including CORS headers)
