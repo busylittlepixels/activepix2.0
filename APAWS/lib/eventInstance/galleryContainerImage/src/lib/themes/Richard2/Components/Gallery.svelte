@@ -62,7 +62,7 @@
     </div>
 </div>
 
-<style>
+<style lang="postcss">
     .Header {
         font-size: 2rem;
     }
@@ -96,11 +96,16 @@
 
   @media screen and (max-width:950px) {
     .gallery-image {
-                flex: auto;
-                border-radius: 10px;
-                /* padding: 7px; */
-                object-fit: cover;
-                width: 45%;
-            }
+        flex: auto;
+        border-radius: 10px;
+        /* padding: 7px; */
+        object-fit: cover;
+        width: 45%;
+        }
+
+    .gallery-container {
+        @apply gap-2;
+        }
+
     }
 </style>

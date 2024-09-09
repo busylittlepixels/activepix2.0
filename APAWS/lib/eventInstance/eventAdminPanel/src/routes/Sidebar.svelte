@@ -57,6 +57,7 @@
 </div>
 
 <style lang="postcss">
+
     .logo {
         max-width: 300px;
         width: 100%;
@@ -98,4 +99,18 @@
     .links a.active:before {
         opacity: 1;
     }
+
+    @media screen and (max-width:1100px) {
+        .sidebar-wrapper {
+            max-width: 250px;
+        }
+    }
+
+    @media screen and (max-width:900px) {
+        .sidebar-wrapper {
+            display: none;
+        }
+    }
+
+    
 </style>
