@@ -11,6 +11,7 @@
         { name: "Download Markers", url: "/downloadMarkers" },
         { name: "Authentication Codes", url: "/authcodes" },
         { name: "Upload media", url: "/uploadMedia" },
+        { name: "Media Library", url: "/mediaLibrary" },
         { name: "Upload participant data", url: "/uploadParticipantData" },
         { name: "Statistics", url: "/statistics" },
         { name: "Support", url: "/support" },

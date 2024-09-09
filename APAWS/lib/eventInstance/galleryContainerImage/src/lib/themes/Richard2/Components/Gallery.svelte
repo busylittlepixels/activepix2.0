@@ -12,10 +12,10 @@
         ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpicture, {targetMedia:media});
     };
 
-    let firstName: string = galleryData.participantData.firstName
-    let lastName: string = galleryData.participantData.lastName
-    let distance: string = galleryData.participantData.distance
-    let time: string = galleryData.participantData.time
+    let firstName: string = galleryData.participantData?.firstName
+    let lastName: string = galleryData.participantData?.lastName
+    let distance: string = galleryData.participantData?.distance
+    let time: string = galleryData.participantData?.time
 
     let hasName: boolean = false
     let hasDistance: boolean = false

@@ -215,7 +215,7 @@
 				</div>
 			</div>
 			
-			<button class="btn btn-primary text-white mt-4 shadow-lg" type="submit">Save</button>
+			<button class="submit-btn btn btn-primary text-white mt-4 shadow-lg" type="submit">Save</button>
 		</form>
 			
 	{:else}
@@ -228,6 +228,7 @@
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+		position: relative;
 	}
 
 	.form-column {
@@ -252,5 +253,11 @@
 
 	h1{
 		@apply text-3xl mt-6;
+	}
+
+	.submit-btn {
+		position: sticky;
+		width: 100%;
+		bottom: 0;
 	}
 </style>
