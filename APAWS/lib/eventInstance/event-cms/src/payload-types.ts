@@ -69,6 +69,15 @@ export interface Participantdatum {
     | number
     | boolean
     | null;
+  submittedData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -113,9 +122,13 @@ export interface PayloadMigration {
 export interface Galleryconfig {
   id: string;
   title?: string | null;
+  detectionStrategy?: ('alpha' | 'ocr') | null;
   logo?: string | Media | null;
+  date?: string | null;
+  location?: string | null;
   overlayImageLandscape?: string | Media | null;
   overlayImagePortrait?: string | Media | null;
+  heroImage?: string | Media | null;
   ctaText?: string | null;
   ctaLink?: string | null;
   ctaImage?: string | Media | null;

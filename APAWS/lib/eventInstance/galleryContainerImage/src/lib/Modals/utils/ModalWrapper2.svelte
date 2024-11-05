@@ -47,20 +47,23 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 1000;
     }
 
     .modal-inner {
-        flex: 0;
+        /* flex: 0; */
         background: transparent;
         /* background: rgba(25, 30, 36, 1); */
         padding: 0.5rem;
         border-radius: 0.5rem;
-        max-width: 95%;
+        max-width: 80%;
         max-height: 95%;
         overflow: auto;
         min-width: 650px;
         /* min-height: 400px; */
         position: relative;
+        height: 100%;
+        
     }
 
     .modalTransparent {

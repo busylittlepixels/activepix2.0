@@ -46,7 +46,7 @@ export class EventInstanceStack extends cdk.Stack {
       bucketName: namepfx.toLowerCase() + 'media-ingress-bucket',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
-      autoDeleteObjects: true,
+      autoDeleteObjects: false,
       cors: [  // Add CORS configuration here
         {
           allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.PUT, s3.HttpMethods.POST, s3.HttpMethods.DELETE, s3.HttpMethods.HEAD],
@@ -197,6 +197,72 @@ export class EventInstanceStack extends cdk.Stack {
     });
 
 
+    const LDebug = new lambda.Function(this, namepfx + 'LDebug', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LDebug'),
+      environment: {
+        PROCESSED_BUCKET: ProcessedBucket.bucketName,
+        PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+      },
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 512,
+    });
+    //Add permissions
+    ProcessedBucket.grantRead(LDebug);
+    ParticipantMetadataTable.grantReadData(LDebug);
+    ProcessedImageMetadataTable.grantReadData(LDebug);
+    const APIDebugResource = api.root.addResource('debug');
+
+    //Add GET method to the debug resource
+    APIDebugResource.addMethod('GET', new cdk.aws_apigateway.LambdaIntegration(LDebug));
+
+    const LFilterMediaKeysByAlreadyUploaded = new lambda.Function(this, namepfx + 'LFilterKeysByAlreadyUploaded', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LFilterKeysByAlreadyUploaded'),
+      environment: {
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+      },
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 256,
+    });
+
+    // Grant the Lambda function necessary permissions
+    ProcessedImageMetadataTable.grantReadData(LFilterMediaKeysByAlreadyUploaded);
+
+    //Create an API Gateway for the LFilterKeysByAlreadyUploaded Lambda function
+    const filterKeys = api.root.addResource('filterMediaKeys');
+
+    // Add POST method to the resource
+
+    filterKeys.addMethod('POST', new cdk.aws_apigateway.LambdaIntegration(LFilterMediaKeysByAlreadyUploaded)); // POST method for filtering media keys
+
+    // Optionally, add CORS support if required
+    filterKeys.addMethod('OPTIONS', new cdk.aws_apigateway.MockIntegration({
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,POST'",
+        },
+      }],
+      passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
+      requestTemplates: {
+        'application/json': '{"statusCode": 200}'
+      },
+    }), {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Origin': true,
+          'method.response.header.Access-Control-Allow-Methods': true,
+        },
+      }]
+    });
 
 
     // Define IAM Role for PayloadCMS ECS Task
@@ -506,13 +572,14 @@ export class EventInstanceStack extends cdk.Stack {
     // Auto scaling based on CPU utilization
     const scaling = service.autoScaleTaskCount({
         minCapacity: 1,
-        maxCapacity: 10,
+        maxCapacity: 60,
     });
 
     scaling.scaleOnCpuUtilization('ProcessorServiceCpuScaling', {
-        targetUtilizationPercent: 50,
-        scaleOutCooldown: cdk.Duration.seconds(60),
-        scaleInCooldown: cdk.Duration.seconds(120),
+        targetUtilizationPercent: 60,
+        scaleOutCooldown: cdk.Duration.seconds(10),
+        scaleInCooldown: cdk.Duration.seconds(30),
+        
     })
   }
 }

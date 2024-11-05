@@ -11,8 +11,8 @@
         }
     });
 
-    let username:string = "admin@activepix.com";
-    let password:string = "LoudZone42!";
+    let username:string = ""//"admin@activepix.com";
+    let password:string = ""//"LoudZone42!";
     async function handleSubmit(){
         await login(username, password).then((res) => {
             if(res){

@@ -1,21 +1,51 @@
 <script lang="ts">
 	import type { ThemedGalleryData } from "$lib/EventTypes";
 
-    export let galleryData:ThemedGalleryData; 
+    export let galleryData:ThemedGalleryData;
 
     import * as ModalManager from "$lib/ModalManager";
-    import Topbar from "$lib/themes/Richard2/Components/Topbar.svelte"
+    import Topbar from "$lib/themes/Theme2/Components/Topbar.svelte"
     import Gallery from "./Components/Gallery.svelte";
 	import HeroTheme2 from "./Components/HeroTheme2.svelte";
 	import ShareBar from "./Components/ShareBar.svelte";
 	import SponsorBox from "./Components/SponsorBox.svelte";
     import {Endpoints} from "$lib/Endpoints";
+	import ShareSection from "./Components/ShareSection.svelte";
+	import { onMount } from "svelte";
+	import PreloadScreen from "./Components/PreloadScreen.svelte";
 
     const mapView = () => {
         ModalManager.openModal(ModalManager.ModalTypes.Theme2Viewpicture, {});
     };
 
+    let mounted=false;
+    let accessAllowed=false;
+    onMount(() => {
+        if(galleryData.participantData?.hasSubmitted) {
+            accessAllowed=true;
+        }
+        //Disable modal for now.
+        accessAllowed=true;
+        mounted=true;
+    });
 </script>
+
+<svelte:head>
+    <meta name="og:image" content="{Endpoints.cms.media.files + galleryData.galleryConfig.heroImage?.url}"/>
+    <meta name="og:image:width" content="{galleryData.galleryConfig.heroImage.width + ""}"/>
+    <meta name="og:image:height" content="{galleryData.galleryConfig.heroImage.height + ""}"/>
+    <meta name="og:image:alt" content="{galleryData.galleryConfig.heroImage.filename}"/>
+    <meta name="og:title" content="{galleryData.galleryConfig.title}"/>
+    {#if galleryData.participantData?.firstName}
+        <meta name="og:description" content="View {galleryData.participantData.firstName}'s gallery."/>
+    {:else}
+        <meta name="og:description" content="View the gallery."/>
+    {/if}
+
+
+</svelte:head>
+
+
 <!-- Background code -->
 <!-- <pre>{JSON.stringify(galleryData, null, 2)}</pre> -->
 <div class="background w-full h-full"></div>
@@ -25,12 +55,16 @@
         </svg>
 </div>    
 <Topbar></Topbar>
-<div class="flex flex-col h-full pageWrapper gap-4">
+{#if accessAllowed}
+<div class="flex flex-col pageWrapper gap-4 pb-8" style="margin-top:90px">
 
    <HeroTheme2 {galleryData}></HeroTheme2>
 
-   <ShareBar></ShareBar>
-
+   <!-- <ShareBar></ShareBar> -->
+    {#if mounted}
+        <!--Needs to be mounted due to use of window.*-->
+        <ShareSection raceName={galleryData.galleryConfig.title}></ShareSection>
+    {/if}
     <SponsorBox ctaData={{
         ctaHref: galleryData.galleryConfig.ctaLink,
         ctaImage: Endpoints.cms.media.files + galleryData.galleryConfig.ctaImage?.url,
@@ -46,7 +80,9 @@
     }}></SponsorBox>
 
 </div>
-
+{:else}
+  <PreloadScreen {galleryData}></PreloadScreen>
+{/if}
 <style>
 
     .pageWrapper {

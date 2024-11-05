@@ -33,8 +33,12 @@ export namespace CMSHelpers {
     export type TMediaItem = {
         id: string;
         url: string;
+        width: number;
+        height: number;
+        filename: string;
         updatedAt: string;
         createdAt: string;
+
     }
     export type TGalleryConfig = {
         title: string;

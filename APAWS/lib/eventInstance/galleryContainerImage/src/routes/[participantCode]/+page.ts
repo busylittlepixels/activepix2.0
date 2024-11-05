@@ -28,10 +28,11 @@ export const load: PageLoad = async ({ fetch, params }) => {
         console.log('participantData', participantData)
         let galleryData:ThemedGalleryData = {
             success: true,
-            theme: ETheme.Theme2,
+            theme: ETheme.Theme2Locked,
             participantCode: participantNumber,
             media: mediaData,
             participantData: participantData?.docs[0]?.additionalData ?? null,
+            participantID: participantData?.docs[0]?.id ?? null,
             // galleryConfig: {} as any
             galleryConfig: (await galleryConfigPromise) ?? null
         };

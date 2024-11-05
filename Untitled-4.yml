@@ -1,0 +1,29 @@
+CMS URL: cms.TESTDEMO.races.activepix.com
+- PayloadCMS endpoint, collections:
+- - Media
+- - ParticipantData
+- - Users (Authed)
+- Globals:
+- - GalleryConfiguration
+- Get Upload URLS:
+- - POST /getUploadUrls
+- - Body: { keys: ['image1.png', 'image2.png', 'image3.png'] }
+
+ADMIN URL: admin.TESTDEMO.races.activepix.com
+FRONTEND URL: testdemo.races.activepix.com
+APIGateway URL: https://x94mo9o8df.execute-api.eu-west-1.amazonaws.com/prod/
+INGRESS_URL: http://apawsei-testdemo-media-ingress-bucket.s3.amazonaws.com
+
+
+CREDENTIALS:
+  email: 'admin@activepix.com',
+  role: 'admin',
+  password: 'LoudZone42!'
+
+  email: 'manager@activepix.com',
+  role: 'manager',
+  password: 'LoudZone42!'
+
+  email: 'user@activepix.com',
+  role: 'user',
+  password: 'LoudZone42!'

@@ -47,14 +47,15 @@
     {/if}
     <div class="flex picture-boxes">
         {#if (galleryData?.media?.length > 0)}
-        <div class="gallery-container gap-4">
+        <div class="-mx-2 gallery-container">
             {#each galleryData.media as media}
-                <div class="gallery-image">
+                <div class="gallery-image p-2">
                     <OverlayedComponent data={{
                         targetMedia: media
                     }} galleryData={galleryData}></OverlayedComponent>
                 </div>
             {/each}
+            <div class="lastitemspacer"></div>
         </div>
     {:else}
         <p>Gallery media not found</p>
@@ -75,11 +76,8 @@
     }
 
     .gallery-image {
-        flex: 1 1 300px;
+        width: 25%;
         border-radius: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        object-fit: cover;  
     }
 
     .rounded {
@@ -95,12 +93,8 @@
   }
 
   @media screen and (max-width:950px) {
-    .gallery-image {
-                flex: auto;
-                border-radius: 10px;
-                /* padding: 7px; */
-                object-fit: cover;
-                width: 45%;
-            }
+        .gallery-image {
+            width: 50%;
+        }
     }
 </style>

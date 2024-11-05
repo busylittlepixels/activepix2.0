@@ -4,12 +4,17 @@ let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN//+'/prod';
 
 let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN + '/api';
 let cmsFileBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
+
+let frontendBaseURL: string = cmsFileBaseURL.replace('://cms.', '://');
 if(cmsBaseURL.includes('localhost')) {
     cmsBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN + '/api';
     cmsFileBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN;
     console.log('Using local CMS', cmsBaseURL);
 }
 export const Endpoints = {
+    frontend: {
+        base: frontendBaseURL,
+    },
     galleryData: {
         baseUrl: galleryDataBaseUrl,
         forParticipant: galleryDataBaseUrl + '/forParticipant',

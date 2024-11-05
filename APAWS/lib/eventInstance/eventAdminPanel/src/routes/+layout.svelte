@@ -67,12 +67,14 @@
 	}
 	.main-content {
 		@apply flex gap-2 mt-2;
-		min-height: 100%;
+		/* min-height: 100%; */
+		flex-grow: 1;
 	}
 	.main-content > div {
 		min-height: 100%;
 	}
 	.page-content {
 		@apply flex-1;
+		width: 0px;
 	}
 </style>

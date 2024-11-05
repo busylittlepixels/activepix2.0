@@ -65,8 +65,8 @@
     }
     .sidebar-wrapper {
         @apply flex flex-col gap-4 p-0;
-        max-width: 400px;
-        width: 100%;
+        width: 350px;
+
     }
     .links {
         @apply flex flex-col gap-2;

@@ -11,11 +11,16 @@ if(process.env.NODE_ENV !== 'production') {
 import { env } from '$env/dynamic/public'
 
 let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
+//Frontend is cmsBaseURL without cms. prefix.
+let frontendBaseURL: string = cmsBaseURL.replace('://cms.', '://');
 if(cmsBaseURL.includes('localhost')) {
     cmsBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN;
     console.log('Using local CMS', cmsBaseURL);
 }
 export const Endpoints = {
+    frontend: {
+        base: frontendBaseURL,
+    },
     galleryData: {
         baseUrl: galleryDataBaseUrl,
         forParticipant: galleryDataBaseUrl + '/forParticipant',

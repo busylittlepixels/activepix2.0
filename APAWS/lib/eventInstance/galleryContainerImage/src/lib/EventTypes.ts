@@ -57,5 +57,6 @@ export type ThemedGalleryData = {
     participantCode: number,
     media: MediaData[],
     participantData: any,//| undefined,
+    participantID: string,//| undefined,
     galleryConfig: CMSHelpers.TGalleryConfig
 }

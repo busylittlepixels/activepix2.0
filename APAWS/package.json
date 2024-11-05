@@ -13,8 +13,14 @@
     "deployInstance1": "npm run build && cdk deploy APAWS-EI-TEST1 --profile=rrharry-aa -vv --require-approval never",
     "deployInstance2": "npm run build && cdk deploy APAWS-EI-TEST2 --profile=rrharry-aa -vv --require-approval never",
     "deployInstance3": "npm run build && cdk deploy APAWS-EI-TEST3 --profile=rrharry-aa -vv --require-approval never",
+    "deployInstance4": "npm run build && cdk deploy APAWS-EI-TEST4 --profile=rrharry-aa -vv --require-approval never",
     "deployDemo": "npm run build && cdk deploy APAWS-EI-TESTDEMO --profile=rrharry-aa -vv --require-approval never",
-    "deployRunclareTest": "npm run build && cdk deploy APAWS-EI-RUNCLARE --profile=rrharry-aa -vv --require-approval never"
+    "deployRunclareTest": "npm run build && cdk deploy APAWS-EI-RUNCLARE --profile=rrharry-aa -vv --require-approval never",
+    "deployExample": "npm run build && cdk deploy APAWS-EI-EXAMPLE --profile=rrharry-aa -vv --require-approval never",
+    "deployROC23": "npm run build && cdk deploy APAWS-EI-ROC23 --profile=rrharry-aa -vv --require-approval never",
+    "deployNAAS10K": "npm run build && cdk deploy APAWS-EI-NAAS10K --profile=rrharry-aa -vv --require-approval never",
+    "deployNAAS10KLIVE": "npm run build && cdk deploy APAWS-EI-NAAS10KLIVE --profile=rrharry-aa -vv --require-approval never",
+    "deployPOLISHIND24": "npm run build && cdk deploy APAWS-EI-POLISHIND24 --profile=rrharry-aa -vv --require-approval never"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

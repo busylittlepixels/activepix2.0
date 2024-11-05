@@ -88,7 +88,10 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
     //     lastEvaluatedKey: <string>
     // }
     const limit = queryParams?.limit ? parseInt(queryParams.limit) : 1000;
-    const lastEvaluatedKey = queryParams?.lastEvaluatedKey;
+    let lastEvaluatedKey = queryParams?.lastEvaluatedKey;
+    if(!lastEvaluatedKey && queryParams?.lastKey) {
+        lastEvaluatedKey = queryParams.lastKey;
+    }
 
     if(limit < 1) {
         return {

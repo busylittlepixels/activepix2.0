@@ -1,6 +1,5 @@
 <script lang="ts">
 
-
 // function copyLinkToClipboard(){
 //         if(baseURL){
 //             navigator.clipboard.writeText(baseURL)+'%3Fnomodal%3Dtrue'

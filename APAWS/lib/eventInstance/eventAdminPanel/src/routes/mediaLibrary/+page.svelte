@@ -14,7 +14,7 @@
     let lastKey:Writable<undefined | string> = writable(undefined)
     
     function updateCurrentThumbnails(){
-        console.log('fetching')
+        console.log('Updating thumbnails')
         fetch(Endpoints.galleryData.manageMedia + `?limit=${$limit}` + ($lastKey ? `&lastKey=${$lastKey}` : ''))
         .then(res => res.json())
         .then(data => {
@@ -28,13 +28,15 @@
 
     function nextPage(){
         $lastKey = $currentThumbnails[$currentThumbnails.length - 1].ingressKey
+        console.log('Updated last key to', $lastKey)
+        updateCurrentThumbnails()
     }
 
     onMount(() => {
         updateCurrentThumbnails()
     })
 
-    $: limit, lastKey, updateCurrentThumbnails();
+    $: $limit, $lastKey, updateCurrentThumbnails();
 </script>
 <div class="page-wrapper flex flex-col gap-2 items-start">
     <h2 class="aptitle">Media</h2>

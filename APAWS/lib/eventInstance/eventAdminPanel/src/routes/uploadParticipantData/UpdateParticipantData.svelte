@@ -14,6 +14,7 @@
         lastName:string,
         distance:string,
         time:string
+        hasSubmitted?:string
     }
     let loadedData:{
         [participantCode:string]:RacerDatum
@@ -66,7 +67,8 @@
                 firstName: rowData["firstName"],
                 lastName: rowData["lastName"],
                 distance: rowData["distance"],
-                time: rowData["time"]
+                time: rowData["time"],
+                hasSubmitted: rowData["hasSubmitted"] ?? "false"
             }
         });
         loadedData = data;

@@ -63,6 +63,14 @@
 			<li>...More photographers</li>
 		</ul>
 	</ul>
+	
+	<h3 class="apsubtitle">Gallery Selector Embed</h3>
+	<p>To help participants find their gallery easily, you can embed the following widget.</p>
+	<pre>
+		&lt;iframe src="{Endpoints.frontend.base}/selectGallery" width="100%" height="400px" frameborder="0"&gt;&lt;/iframe&gt;
+	</pre>
+	<p>The widget will appear like this:</p>
+	<iframe src="{Endpoints.frontend.base}/selectGallery" width="100%" height="400px" frameborder="0"></iframe>
 </div>
 
 <style lang="postcss">

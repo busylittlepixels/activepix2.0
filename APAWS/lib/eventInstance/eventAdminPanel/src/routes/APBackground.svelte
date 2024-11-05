@@ -34,5 +34,7 @@
         height: 100%;
         z-index: 1;
         overflow: auto;
+        display: flex;
+        flex-direction: column;
     }   
 </style>

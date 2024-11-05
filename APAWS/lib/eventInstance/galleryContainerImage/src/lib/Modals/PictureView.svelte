@@ -2,11 +2,12 @@
 
     import ModalWrapper from "./utils/ModalWrapper.svelte";
     import * as ModalManager from "$lib/ModalManager";
-	import type { MediaData } from "$lib/EventTypes";
+	import type { MediaData, ThemedGalleryData } from "$lib/EventTypes";
+	import OverlayedComponent from "$lib/themes/Theme2Locked/Components/OverlayedComponent.svelte";
 
     export let id:number;
     export let type:ModalManager.ModalTypes
-    export let data:{targetMedia:MediaData};
+    export let data:{targetMedia:MediaData, galleryData: ThemedGalleryData};
 
 
 
@@ -19,7 +20,8 @@
 <ModalWrapper onBackgroundClick={closeThisModal}>
     <div>
         <!-- <pre>{JSON.stringify(data,null,2)}</pre> -->
-        <img class="rounded" src={data.targetMedia.large} alt={data.targetMedia.ingress} />
+        <!-- <img class="rounded" src={data.targetMedia.large} alt={data.targetMedia.ingress} /> -->
+         <OverlayedComponent data={data} galleryData={data.galleryData} lightboxed={false}/>
     </div>
     <div class="flex flex-row justify-between">
         <div class="flex items-center mt-2">

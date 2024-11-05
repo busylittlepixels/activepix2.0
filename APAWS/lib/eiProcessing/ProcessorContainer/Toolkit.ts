@@ -95,19 +95,24 @@ export async function processImage(ctx: ProcessImageContext) : Promise<ProcessIm
 
     //Save metadata
     console.log('Saving media metadata');
+
+    function removeDuplicates(arr: number[]) {
+        return Array.from(new Set(arr));
+    }
     if(!(await participantCodesPromise).length) {
-        return {
-            success: false,
-            message: 'No participants detected in image',
-        }
+        // return {
+        //     success: false,
+        //     message: 'No participants detected in image',
+        // }
+        participantCodesPromise = Promise.resolve([-1]);
     }
     let metadataItem = {
         ingressKey: ctx.ingressKey,
-        participantCodes: await participantCodesPromise,
+        participantCodes: removeDuplicates(await participantCodesPromise),
         thumbnailKey: imageSizes.find(key => key.includes('thumbnail')) || '',
         fullsizeKey: imageSizes.find(key => key.includes('large')) || '',
     };
-    console.log()
+    // console.log()
 
     await ctx.ddb.putItem({
         TableName: ctx.imageMetadataTable,
@@ -231,6 +236,9 @@ export async function getParticipantCodes(ctx: GetParticipantCodesContext): Prom
     //TODO: Change for paralell processing
     try {
         let participantCodesForOnlyImage = codeMap[Object.keys(codeMap)[0]]
+        if(!participantCodesForOnlyImage.length) {
+            return [-1]
+        }
         return participantCodesForOnlyImage
     } catch(e) {
         console.error('Failed to get participant codes from codeMap', e)
