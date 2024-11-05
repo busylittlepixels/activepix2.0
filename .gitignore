@@ -2,3 +2,4 @@ node_modules
 .svelte-kit
 cdk.out
 cdk.out.old
+opencv_aws_lambda/
