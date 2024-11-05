@@ -57,14 +57,22 @@
                 </div>
             {/each}
         </div>
-        <input type="number" placeholder="Participant Code" bind:value={participantCode}/>
-        <button on:click={() => {
+        <form class="flex flex-col gap-2" on:submit|preventDefault={(e)=>{
             if(participantCode !== null){
                 addCode(participantCode)
             } else {
                 alert('Please enter a participant code')
             }
-        }}>Add</button>
+        }}>
+            <input type="number" placeholder="Participant Code" bind:value={participantCode}/>
+            <button on:click={() => {
+                if(participantCode !== null){
+                    addCode(participantCode)
+                } else {
+                    alert('Please enter a participant code')
+                }
+            }}>Add</button>
+        </form>
     </div>
 </ModalWrapper>
 
