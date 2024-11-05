@@ -177,7 +177,7 @@
 </script>
 
 <div class="wrapper" bind:this={updateParticipantDataFormWrapper}>
-    <form class="form select-file flex flex-row items-center gap-2" bind:this={selectFileFormWrapper}>
+    <form class="form select-file flex flex-row items-center gap-4" bind:this={selectFileFormWrapper}>
         {#if fileErrors.length > 0}
         <div class="w-full alert alert-error mb-2 prose text-white py-1">
             {#each fileErrors as error}
@@ -213,7 +213,7 @@
             </tbody>
         </table>
     {/if}
-    <button class="btn btn-primary" on:click={updateParticipantDataSubmitted}>Save participant data
+    <button class="btn btn-primary mt-2" on:click={updateParticipantDataSubmitted}>Save participant data
         {#if isUploading}
         ({currentlyUploaded}/{totalToUpload})
         {/if}
