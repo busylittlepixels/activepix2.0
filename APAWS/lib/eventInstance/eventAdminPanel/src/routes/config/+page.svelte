@@ -150,6 +150,7 @@
 						<strong>Gallery URL:</strong> <em>https://{env.PUBLIC_GALLERY_DOMAIN}</em><br/>
 						<strong>Admin URL:</strong> <em>https://{env.PUBLIC_ADMIN_DOMAIN}</em><br/>
 						<strong>CMS URL:</strong> <em>https://{env.PUBLIC_CMS_DOMAIN}</em><br/>
+						<strong>API URL:</strong> <em>https://{env.PUBLIC_API_DOMAIN}</em><br/>
 					</p></div>
 				</div>
 				<h1>Basic Information</h1>

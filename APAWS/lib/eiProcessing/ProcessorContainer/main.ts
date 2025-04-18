@@ -5,7 +5,7 @@ import { AndriiCodeDetector } from './AndriiDetector';
 import { processImage } from './Toolkit';
 
 // Ensure all required environment variables are defined
-const requiredEnvVars = ['MEDIA_BUCKET', 'PROCESSED_BUCKET', 'METADATA_TABLE', 'PARTICIPANT_TABLE', 'SQS_QUEUE_URL'];
+const requiredEnvVars = ['MEDIA_BUCKET', 'PROCESSED_BUCKET', 'METADATA_TABLE', 'PARTICIPANT_TABLE', 'SQS_QUEUE_URL', 'CMS_ENDPOINT', 'AWS_REGION'];
 
 
 // while (true){}
@@ -26,6 +26,7 @@ const processedBucket = process.env.PROCESSED_BUCKET as string;
 const metadataTable = process.env.METADATA_TABLE as string;
 const participantTable = process.env.PARTICIPANT_TABLE as string;
 const queueUrl = process.env.SQS_QUEUE_URL as string;
+const cmsEndpoint = process.env.CMS_ENDPOINT as string;
 
 // Initialize the SQS service
 const sqs = new aws.SQS({ region: process.env.AWS_REGION });
@@ -96,6 +97,18 @@ async function pollQueue(): Promise<void> {
                             }
                             const mediaKey = data.key;
                             const mediaPath = path.join(workspacePath, mediaKey);
+                            //Get the filetype from the key
+                            const fileType = mediaKey.split('.').pop()?.toLowerCase();
+                            const allowedFileTypes = ['jpg', 'jpeg', 'png', 'tiff', 'bmp']
+                            //If the filetype is not allowed, skip the image and delete the message
+                            if (!allowedFileTypes.includes(fileType as string)){
+                                console.error('Filetype not allowed, skipping image:', mediaKey)
+                                await sqs.deleteMessage({
+                                    QueueUrl: queueUrl,
+                                    ReceiptHandle: message.ReceiptHandle as string,
+                                }).promise();
+                                continue;
+                            }
                             console.log('Downloading image from S3:', mediaKey);
                             const s3res = await s3.getObject({ Bucket: mediaBucket, Key: mediaKey }).promise();
                             console.log('Downloaded image from S3:', mediaKey);
@@ -112,7 +125,8 @@ async function pollQueue(): Promise<void> {
                                 imageMetadataTable: metadataTable,
                                 participantMetadataTable: participantTable,
                                 ingressKey: mediaKey,
-                                workspacePath: workspacePath
+                                workspacePath: workspacePath,
+                                cmsEndpoint
                             });
 
                             console.log('Done, deleting message from queue');

@@ -94,6 +94,7 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
         totalProcessed: number,
         totalProcessedWithAtLeastOneParticipant: number,
         totalProcessedWithNoParticipants: number,
+        hitrate: number,
         totalNotProcessed: number,
         averageParticipantsPerImage: number,
         notProcessed: string[],
@@ -106,6 +107,7 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
         totalProcessed: 0,
         totalProcessedWithAtLeastOneParticipant: 0,
         totalProcessedWithNoParticipants: 0,
+        hitrate: 0,
         totalNotProcessed: 0,
         averageParticipantsPerImage: 0,
         notProcessed: [],
@@ -148,24 +150,48 @@ const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => 
     report.allKeys = processedKeys;
 
     // 3. Compare the two lists to generate the report
-    filteredKeys.forEach((key) => {
-        if (processedKeys.includes(key)) {
-            report.processed.push(key);
-            const item = scanResult.Items?.find((item) => item.ingressKey === key);
-            report.misc[key] = item;
-            if (item?.participantCodes) {
-                if(item.participantCodes.values.length > 0) {
-                    report.totalProcessedWithAtLeastOneParticipant += 1;
-                } else {
-                    report.totalProcessedWithNoParticipants += 1;
-                }
-            }
+    report.misc.reportdebug= {};
+    report.misc.reportdebug.processedKeys = processedKeys;
+    report.misc.reportdebug.notInProcessedKeys = [];
+    report.misc.reportdebug.withNoParticipants = {}
+    report.misc.reportdebug.withParticipants = {}
+    processedKeys.forEach((key) => {
+        report.processed.push(key);
+        const item = scanResult.Items?.find((item) => item.ingressKey === key);
+        report.misc[key] = item;
+        //item.participantCodes is a Set
+        // let participantCodes = [...((item?.participantCodes || new Set()) as Set<number>).values()]
+        // participantCodes = participantCodes.filter((code) => code !== -1);
+        // const participantCodes = Object.values(item?.participantCodes || {}).filter((code) => code !== -1);
+        let participantCodes = ((Object.values(item?.participantCodes)?.[1]) as number[]) || [];
+
+        
+        
+        participantCodes = participantCodes.filter((code) => code !== -1);
+
+        //Par
+        if (participantCodes.length > 0) {
+            report.totalProcessedWithAtLeastOneParticipant += 1;
+            report.misc.reportdebug.withParticipants[key] = {};
+            report.misc.reportdebug.withParticipants[key].item = item;
+            // report.misc.reportdebug.withParticipants[key].participantCodes = item?.participantCodes;
+            report.misc.reportdebug.withParticipants[key].participantCodesFiltered = participantCodes;
+            // report.misc.reportdebug.withParticipants[key].participantCodesType = typeof item?.participantCodes;
+            // report.misc.reportdebug.withParticipants[key].participantCodesLength = item?.participantCodes?.length;
+            return;
         } else {
-            report.notProcessed.push(key);
+            report.totalProcessedWithNoParticipants += 1;
+            report.misc.reportdebug.withNoParticipants[key] = {};
+            report.misc.reportdebug.withNoParticipants[key].item = item;
+            report.misc.reportdebug.withNoParticipants[key].participantCodes = item?.participantCodes;
+            report.misc.reportdebug.withNoParticipants[key].participantCodesFiltered = participantCodes;
+            // report.misc.reportdebug.withNoParticipants[key].participantCodesFiltered = Object.values(item?.participantCodes || {}).filter((code) => code !== -1);
+            // report.misc.reportdebug.withNoParticipants[key].participantCodesType = typeof item?.participantCodes;
+            // report.misc.reportdebug.withNoParticipants[key].participantCodesLength = item?.participantCodes?.length;
         }
     });
+    report.hitrate = report.totalProcessedWithAtLeastOneParticipant / report.totalProcessed;
 
-    report.totalNotProcessed = report.notProcessed.length;
 
     return {
         statusCode: 200,

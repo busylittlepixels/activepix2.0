@@ -17,15 +17,15 @@ const serviceAdminProps:ServiceAdminStackProps = {
   subdomain: 'testServiceAdmin'
 }
 // new ServiceAdminStack(app, 'APAWS-SA', serviceAdminProps);
-new EventInstanceStack(app, 'APAWS-EI-TEST', {
-  name: 'APAWSEI-TEST',
-  subdomain: 'test',
-  env: env,
-  tags: {
-    APAWSEI: 'TEST',
-    "APAWSEI-LIVE": "false"
-  }
-});
+// new EventInstanceStack(app, 'APAWS-EI-TEST', {
+//   name: 'APAWSEI-TEST',
+//   subdomain: 'test',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'TEST',
+//     "APAWSEI-LIVE": "false"
+//   }
+// });
 new EventInstanceStack(app, 'APAWS-EI-TEST1', {
   name: 'APAWSEI-TEST1',
   subdomain: 'test1',
@@ -63,84 +63,105 @@ new EventInstanceStack(app, 'APAWS-EI-TEST4', {
   }
 });
 
-new EventInstanceStack(app, 'APAWS-EI-STAGING', {
-  name: 'APAWSEI-STAGING',
-  subdomain: 'staging',
-  env: env,
-  tags: {
-    APAWSEI: 'TEST',
-    "APAWSEI-LIVE": "false"
-  }
-});
+// new EventInstanceStack(app, 'APAWS-EI-STAGING', {
+//   name: 'APAWSEI-STAGING',
+//   subdomain: 'staging',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'TEST',
+//     "APAWSEI-LIVE": "false"
+//   }
+// });
 
-new EventInstanceStack(app, 'APAWS-EI-TESTDEMO', {
-  name: 'APAWSEI-TESTDEMO',
-  subdomain: 'TESTDEMO',
-  env: env,
-  tags: {
-    APAWSEI: 'TEST',
-    "APAWSEI-LIVE": "false"
-  }
-});
+// new EventInstanceStack(app, 'APAWS-EI-TESTDEMO', {
+//   name: 'APAWSEI-TESTDEMO',
+//   subdomain: 'testdemo',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'TEST',
+//     "APAWSEI-LIVE": "false"
+//   }
+// });
 
 //Set up runclare
 
-new EventInstanceStack(app, 'APAWS-EI-RUNCLARE', {
-  name: 'APAWSEI-RUNCLARE',
-  subdomain: 'runclare',
-  env: env,
-  tags: {
-    APAWSEI: 'TEST',
-    "APAWSEI-LIVE": "false"
-  }
-});
+// new EventInstanceStack(app, 'APAWS-EI-RUNCLARE', {
+//   name: 'APAWSEI-RUNCLARE',
+//   subdomain: 'runclare',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'TEST',
+//     "APAWSEI-LIVE": "false"
+//   }
+// });
 
-new EventInstanceStack(app, 'APAWS-EI-EXAMPLE', {
-  name: 'APAWSEI-EXAMPLE',
-  subdomain: 'example',
-  env: env,
-  tags: {
-    APAWSEI: 'TEST',
-    "APAWSEI-LIVE": "false"
-  }
-});
+// new EventInstanceStack(app, 'APAWS-EI-EXAMPLE', {
+//   name: 'APAWSEI-EXAMPLE',
+//   subdomain: 'example',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'TEST',
+//     "APAWSEI-LIVE": "false"
+//   }
+// });
 
-new EventInstanceStack(app, 'APAWS-EI-ROC23', {
-  name: 'APAWSEI-ROC23',
-  subdomain: 'roc23',
-  env: env,
-  tags: {
-    APAWSEI: 'TEST',
-    "APAWSEI-LIVE": "false"
-  }
-})
+// new EventInstanceStack(app, 'APAWS-EI-ROC23', {
+//   name: 'APAWSEI-ROC23',
+//   subdomain: 'roc23',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'TEST',
+//     "APAWSEI-LIVE": "false"
+//   }
+// })
 
-new EventInstanceStack(app, 'APAWS-EI-NAAS10K', {
-  name: 'APAWSEI-NAAS10K',
-  subdomain: 'naas10k',
-  env: env,
-  tags: {
-    APAWSEI: 'LIVE',
-    "APAWSEI-LIVE": "true"
-  }
-})
+// new EventInstanceStack(app, 'APAWS-EI-NAAS10K', {
+//   name: 'APAWSEI-NAAS10K',
+//   subdomain: 'naas10k',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'LIVE',
+//     "APAWSEI-LIVE": "true"
+//   }
+// })
 
-new EventInstanceStack(app, 'APAWS-EI-NAAS10KLIVE', {
-  name: 'APAWSEI-NAAS10KLIVE',
-  subdomain: 'naas10km',
-  env: env,
-  tags: {
-    APAWSEI: 'LIVE',
-    "APAWSEI-LIVE": "true"
-  }
-})
+// new EventInstanceStack(app, 'APAWS-EI-NAAS10KLIVE', {
+//   name: 'APAWSEI-NAAS10KLIVE',
+//   subdomain: 'naas10km',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'LIVE',
+//     "APAWSEI-LIVE": "true"
+//   }
+// })
 
-new EventInstanceStack(app, 'APAWS-EI-POLISHIND24', {
-  name: 'APAWSEI-POLISHIND24',
-  subdomain: 'pi24',
-  env: env,
-  tags: {
-    APAWSEI: 'LIVE',
-    "APAWSEI-LIVE": "true"
-  }
-})
+// new EventInstanceStack(app, 'APAWS-EI-POLISHIND24', {
+//   name: 'APAWSEI-POLISHIND24',
+//   subdomain: 'pi24',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'LIVE',
+//     "APAWSEI-LIVE": "true"
+//   }
+// })
+
+// new EventInstanceStack(app, 'APAWS-EI-GRT24', {
+//   name: 'APAWSEI-GRT24',
+//   subdomain: 'grt24',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'LIVE',
+//     "APAWSEI-LIVE": "true"
+//   }
+// });
+
+//kolkatakiddathon
+// new EventInstanceStack(app, 'APAWS-EI-KOLKATAKIDDATHON', {
+//   name: 'APAWSEI-KOLKATAKIDDATHON',
+//   subdomain: 'kolkatakiddathon',
+//   env: env,
+//   tags: {
+//     APAWSEI: 'LIVE',
+//     "APAWSEI-LIVE": "true"
+//   }
+// });

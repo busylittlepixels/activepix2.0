@@ -30,20 +30,7 @@
     });
 </script>
 
-<svelte:head>
-    <meta name="og:image" content="{Endpoints.cms.media.files + galleryData.galleryConfig.heroImage?.url}"/>
-    <meta name="og:image:width" content="{galleryData.galleryConfig.heroImage.width + ""}"/>
-    <meta name="og:image:height" content="{galleryData.galleryConfig.heroImage.height + ""}"/>
-    <meta name="og:image:alt" content="{galleryData.galleryConfig.heroImage.filename}"/>
-    <meta name="og:title" content="{galleryData.galleryConfig.title}"/>
-    {#if galleryData.participantData?.firstName}
-        <meta name="og:description" content="View {galleryData.participantData.firstName}'s gallery."/>
-    {:else}
-        <meta name="og:description" content="View the gallery."/>
-    {/if}
 
-
-</svelte:head>
 
 
 <!-- Background code -->
@@ -63,7 +50,7 @@
    <!-- <ShareBar></ShareBar> -->
     {#if mounted}
         <!--Needs to be mounted due to use of window.*-->
-        <ShareSection raceName={galleryData.galleryConfig.title}></ShareSection>
+        <ShareSection raceName={galleryData.galleryConfig.title} {galleryData}></ShareSection>
     {/if}
     <SponsorBox ctaData={{
         ctaHref: galleryData.galleryConfig.ctaLink,

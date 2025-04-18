@@ -24,6 +24,10 @@ const Users: CollectionConfig = {
           value: 'manager',
         },
         {
+          label: 'Photographer',
+          value: 'photographer',
+        },
+        {
           label: 'User',
           value: 'user',
         },

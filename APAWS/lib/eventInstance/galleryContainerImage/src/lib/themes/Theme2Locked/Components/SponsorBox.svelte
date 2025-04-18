@@ -43,6 +43,7 @@
         max-height: 350px;
         border-radius: 10px;
         flex: auto;
+        /* background-size: contain; */
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -60,7 +61,7 @@
         max-height: 300px;
         border-radius: 10px;
         flex: auto;
-        background-size: cover;
+        /* background-size: cover; */
         background-repeat: no-repeat;
         background-position: center;
         overflow: hidden;

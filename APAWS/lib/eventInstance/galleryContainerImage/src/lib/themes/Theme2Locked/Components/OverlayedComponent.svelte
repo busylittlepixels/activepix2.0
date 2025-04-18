@@ -46,7 +46,7 @@
 
 <div class="oi-wrapper" on:click={openLightbox} bind:this={wrapperElement}>
     <img class="rounded targetMedia" src={data.targetMedia.large} alt={data.targetMedia.ingress} />
-    <img class="rounded overlayed" src={fullURL}/>
+    <!-- <img class="rounded overlayed" src={fullURL}/> -->
 </div>
 
 <style>

@@ -26,6 +26,10 @@
 				checkAuth();
 			});
 		});
+
+		let authCheckInterval = setInterval(() => {
+			checkAuth();
+		}, 10000);
 		return [
 			unsubscribePage,
 			unsubscribeAuth

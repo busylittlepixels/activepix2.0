@@ -1,8 +1,16 @@
 <script lang="ts">
+	import { Endpoints } from "$lib/Endpoints";
+	import type { MediaData, ThemedGalleryData } from "$lib/EventTypes";
 	import { onDestroy, onMount } from "svelte";
+	import { writable, type Writable } from "svelte/store";
 
     export let baseURL:string|null = null
     export let raceName:string
+    export let mediaItemData:{
+        targetMedia: MediaData,
+        galleryData: ThemedGalleryData
+    } | undefined = undefined
+    export let galleryData: ThemedGalleryData | undefined = undefined
 
     const linkCopiedMaxDuration = 1000
     let linkLastCopied = 0;
@@ -63,11 +71,36 @@
     //     })
     //     return true
     // }
+
+    let downloadStatus:Writable<string> = writable('')
+    async function download() {
+        if(!mediaItemData) {
+            //Download entire gallery.
+            const ingressKeys:string[] = Object.values(galleryData?.media ?? {}).map((mediaItem:MediaData)=>{
+                return mediaItem.ingress
+            })
+
+            downloadStatus.set('Zipping images...')
+            const zipurl = await fetch(Endpoints.galleryData.downloadGalleryZip + '?ingressKeys=' + ingressKeys.join(','))
+            const res = await zipurl.json()
+            if(res.url) {
+                window.open(res.url, '_blank')
+                downloadStatus.set('')
+            } else {
+                downloadStatus.set('Download failed.')
+            }
+        } else {
+            //Download single image.
+            $downloadStatus = 'Downloading...'
+            window.open(mediaItemData.targetMedia.large, '_blank')
+            $downloadStatus = ''
+        }
+    }
 </script>
 
 <div class="outer w-full flex flex-row justify-center">
     <h2 class="meta">Share Gallery</h2>
-    <a class="icon-wrapper" target="_blank" href="{getFacebookLink(baseURL)}" on:click|stopPropagation={()=>{
+    <!-- <a class="icon-wrapper" target="_blank" href="{getFacebookLink(baseURL)}" on:click|stopPropagation={()=>{
         // trackGalleryShare('facebook', raceid, participantID)
         return true
     }}>
@@ -84,12 +117,24 @@
         return true
     }}>
         <img src="/icons/whatsapp.svg" alt="Whatsapp Icon" class="w-6 h-6"/>
+    </a> -->
+    <a class="icon-wrapper" target="_blank" href="{getFacebookLink(baseURL)}">
+        <img src="/icons/facebook.svg" alt="Facebook Icon" class="w-8 h-8"/>
+    </a>
+    <a class="icon-wrapper" target="_blank" href="{getXLink(baseURL)}">
+        <img src="/icons/xlogo.svg" alt="Play Icon" class="w-6 h-6"/>
+    </a>
+    <a class="icon-wrapper" href="{getWhatsappLink(baseURL)}">
+        <img src="/icons/whatsapp.svg" alt="Whatsapp Icon" class="w-6 h-6"/>
     </a>
     <div class="icon-wrapper" on:click={copyLinkToClipboard}>
         <img src="/icons/link.svg" alt="Link Icon" class="w-8 h-8" />
         {#if linkLastCopied}
             <p class="meta"><strong style="opacity:{1-((currentTime - linkLastCopied) / linkCopiedMaxDuration)}">Copied to clipboard</strong></p>
         {/if}
+    </div>
+    <div class="icon-wrapper" on:click={download}>
+        <img src="/icons/download.png" alt="Download Icon" class="w-8 h-8" style="padding: .35rem"/>
     </div>
 </div>
 

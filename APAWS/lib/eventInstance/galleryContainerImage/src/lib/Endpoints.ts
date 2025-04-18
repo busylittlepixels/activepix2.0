@@ -4,14 +4,24 @@ let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN ?? ""
 if(galleryDataBaseUrl.endsWith('/')) {
     galleryDataBaseUrl = galleryDataBaseUrl.slice(0, -1);
 }
+//if galleryData does not start with 'http' add it
+if (!galleryDataBaseUrl.startsWith('http')) {
+    galleryDataBaseUrl = 'https://' + galleryDataBaseUrl;
+}
 
 if(process.env.NODE_ENV !== 'production') {
-    galleryDataBaseUrl = 'https://d9l1tauhad.execute-api.eu-west-1.amazonaws.com/prod/';
+    galleryDataBaseUrl = 'https://api.test4.races.activepix.com';
 }
 import { env } from '$env/dynamic/public'
 
 let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
 //Frontend is cmsBaseURL without cms. prefix.
+
+//Dev stuff
+if(process.env.NODE_ENV !== 'production') {
+    cmsBaseURL = 'https://cms.test4.races.activepix.com';
+}
+
 let frontendBaseURL: string = cmsBaseURL.replace('://cms.', '://');
 if(cmsBaseURL.includes('localhost')) {
     cmsBaseURL = 'http://'+env.PUBLIC_CMS_DOMAIN;
@@ -24,6 +34,7 @@ export const Endpoints = {
     galleryData: {
         baseUrl: galleryDataBaseUrl,
         forParticipant: galleryDataBaseUrl + '/forParticipant',
+        downloadGalleryZip: galleryDataBaseUrl + '/downloadGalleryZip',
     },
     cms: {
         users: {

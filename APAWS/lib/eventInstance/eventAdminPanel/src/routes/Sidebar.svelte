@@ -9,12 +9,12 @@
         // Login Tokens: /loginTokens
         { name: "Configuration", url: "/config" },
         { name: "Download Markers", url: "/downloadMarkers" },
-        { name: "Authentication Codes", url: "/authcodes" },
+        // { name: "Authentication Codes", url: "/authcodes" },
         { name: "Upload media", url: "/uploadMedia" },
         { name: "Media Library", url: "/mediaLibrary" },
         { name: "Upload participant data", url: "/uploadParticipantData" },
-        { name: "Statistics", url: "/statistics" },
-        { name: "Support", url: "/support" },
+        // { name: "Statistics", url: "/statistics" },
+        // { name: "Support", url: "/support" },
     ];
 
     function recomputeActiveLinks(currentURL: string) {

@@ -43,13 +43,15 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         case 'OPTIONS':
             return handleOptions();
 
-        // case 'GET':
-        //     return await handleGet({
-        //         event,
-        //         processedBucket,
-        //         participantMetadataTable,
-        //         imageMetadataTable,
-        //     });
+        case 'GET':
+            return await handleGet({
+                event,
+                processedBucket,
+                participantMetadataTable,
+                imageMetadataTable,
+                ingressBucket,
+                imageProcessingQueue
+            });
 
         case 'POST':
             // return await handlePost({
@@ -79,6 +81,148 @@ const handleOptions = (): APIGatewayProxyResult => {
             'Access-Control-Allow-Methods': 'OPTIONS,POST',
         },
         body: '',
+    };
+};
+
+//Fetch all S3 objects
+const fetchAllObjects = async (s3: AWS.S3, bucket: string): Promise<AWS.S3.ObjectList> => {
+    let allObjects: AWS.S3.ObjectList = [];
+    let continuationToken: string | undefined = undefined;
+
+    do {
+        const params: AWS.S3.ListObjectsV2Request = {
+            Bucket: bucket,
+            ContinuationToken: continuationToken,
+        };
+
+        console.log(`Fetching objects from bucket: ${bucket}, continuationToken: ${continuationToken}`);
+        const response = await s3.listObjectsV2(params).promise();
+        if (response.Contents) {
+            allObjects = allObjects.concat(response.Contents);
+        }
+        continuationToken = response.NextContinuationToken;
+    } while (continuationToken);
+
+    return allObjects;
+};
+
+
+// Async function to handle GET requests
+const handleGet = async (ctx:HandlerContext): Promise<APIGatewayProxyResult> => {
+    //Check query parameter 'debugKey' is set to 'AzureBean'
+    const queryParams = ctx.event.queryStringParameters;
+    const debugKey = queryParams?.debugKey;
+    if(debugKey !== 'AzureBean') {
+        return {
+            statusCode: 400,
+            headers: defaultHeaders(),
+            body: JSON.stringify({ message: 'Invalid debugKey parameter' }),
+        };
+    }
+
+    /*
+    queing example:
+    const bucket = record.s3.bucket.name;
+        const key = record.s3.object.key;
+
+        console.log(`Queueing for processing, image: ${key} from bucket: ${bucket}`);
+
+        // Construct the message to be sent to the SQS queue
+        const messageBody = JSON.stringify({
+            bucket,
+            key,
+        });
+
+        // Send the message to the SQS queue
+        try {
+            const result = await sqs.sendMessage({
+                QueueUrl: SQS_QUEUE_URL,
+                MessageBody: messageBody
+            }).promise();
+            console.log(`Message sent to SQS, MessageId: ${result.MessageId}`);
+        } catch (error) {
+            console.log(error)
+            console.error(`Failed to send message to SQS`);
+            throw new Error(`Failed to send message to SQS: ${error}`);
+        }
+    */
+
+    //Loop through all items in the S3 bucket, and re-queue them for processing
+    const s3 = new AWS.S3();
+    const sqs = new AWS.SQS();
+
+    const params = {
+        Bucket: ctx.ingressBucket,
+    };
+
+    console.log(`Fetching all objects from bucket: ${ctx.ingressBucket}`);
+    const s3Objects = await fetchAllObjects(s3, ctx.ingressBucket);
+
+    //Limited to 1000 items, so we need to paginate
+
+
+    let successCount = 0;
+    let errorCount = 0;
+    let totalCount = s3Objects.length;
+    // for(const item of s3Objects.Contents || []) {
+    //     const key = item.Key;
+
+    //     console.log(`Queueing for processing, image: ${key} from bucket: ${ctx.ingressBucket}`);
+
+    //     // Construct the message to be sent to the SQS queue
+    //     const messageBody = JSON.stringify({
+    //         bucket: ctx.ingressBucket,
+    //         key,
+    //     });
+
+    //     // Send the message to the SQS queue
+    //     try {
+    //         const result = await sqs.sendMessage({
+    //             QueueUrl: ctx.imageProcessingQueue,
+    //             MessageBody: messageBody,
+    //         }).promise();
+    //         console.log(`Message sent to SQS, MessageId: ${result.MessageId}`);
+    //         successCount++;
+    //     } catch (error) {
+    //         console.error(`Failed to send message to SQS`);
+    //         throw new Error(`Failed to send message to SQS: ${error}`);
+    //         errorCount++;
+    //     }
+    // }
+    //Refactor to use Promise.all
+    const promises = s3Objects.map(async (item) => {
+        const key = item.Key;
+
+        // console.log(`Queueing for processing, image: ${key} from bucket: ${ctx.ingressBucket}`);
+
+        // Construct the message to be sent to the SQS queue
+        const messageBody = JSON.stringify({
+            bucket: ctx.ingressBucket,
+            key,
+        });
+
+        // Send the message to the SQS queue
+        try {
+            const result = await sqs.sendMessage({
+                QueueUrl: ctx.imageProcessingQueue,
+                MessageBody: messageBody,
+            }).promise();
+            // console.log(`Message (${successCount + errorCount} / ${totalCount}) sent to SQS, MessageId: ${result.MessageId}`);
+            successCount++;
+        } catch (error) {
+            console.error(`Failed to send message to SQS`);
+            throw new Error(`Failed to send message to SQS: ${error}`);
+            errorCount++;
+        }
+    });
+
+    await Promise.all(promises || []);
+
+
+    return {
+        statusCode: 200,
+        headers: defaultHeaders(),
+        body: JSON.stringify({ message: 'Successfully requeued', successCount, errorCount }),
     };
 };
 

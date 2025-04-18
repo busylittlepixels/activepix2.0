@@ -4,7 +4,7 @@
     import * as ModalManager from "$lib/ModalManager";
 	import type { MediaData, ThemedGalleryData } from "$lib/EventTypes";
 	import OverlayedComponent from "$lib/themes/Theme2Locked/Components/OverlayedComponent.svelte";
-	import ShareSection from "$lib/themes/Theme2/Components/ShareSection.svelte";
+	import ShareSection from "$lib/themes/Theme2Locked/Components/ShareSection.svelte";
 
     export let id:number;
     export let type:ModalManager.ModalTypes
@@ -26,7 +26,7 @@
         <OverlayedComponent data={data} galleryData={data.galleryData} lightboxed={false}/>
     </div>
 
-    <ShareSection baseURL={window.location.href.split('?')[0]} raceName={data.galleryData.galleryConfig.title}></ShareSection>
+    <ShareSection baseURL={window.location.href.split('?')[0]} mediaItemData={data} galleryData={data.galleryData} raceName={data.galleryData.galleryConfig.title}></ShareSection>
     <!-- <div class="flex flex-row justify-center items-center gap-6 mt-4 w-full shareBox">
         <div class="flex">
             <p class="text-4x1">Share Picture</p>
@@ -46,7 +46,12 @@
 
 <style lang="postcss">
     .mainSection{
-        height: calc(100% - 80px); 
+        /* height: calc(100% - 80px);  */
+    }
+    @media (min-width: 1600px) {
+        .mainSection{
+            height: calc(100% - 80px); 
+        }
     }
     .header {
         font-size: 2rem;

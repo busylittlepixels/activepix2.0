@@ -3,22 +3,36 @@
     import { AuthStore, isAuthed, login } from "$lib/Authentication";
 	import { CMSHelpers } from "$lib/CMSHelpers";
     import { onMount } from "svelte";
+	import { get } from "svelte/store";
 
     onMount(async () => {
         let Authed = await isAuthed();
-        if(Authed) {
-            goto('/dashboard');
-        }
+        // if(Authed) {
+        //     goto('/dashboard');
+        // }
     });
 
     let username:string = ""//"admin@activepix.com";
-    let password:string = ""//"LoudZone42!";
+    let password:string = ""
+    let loginMode:"manager"|"photographer" = "manager";
     async function handleSubmit(){
         await login(username, password).then((res) => {
             if(res){
-                goto("/config");
+                    let role = get(AuthStore)?.user?.role
+                    console.log(get(AuthStore))
+                    if(role === "manager" || role === "admin"){
+                        goto("/dashboard");
+                        return
+                    } else if(role === "photographer"){
+                        goto("/photographer");
+                        return
+                    } else {
+                        alert("Invalid role");
+                        return;
+                    }
             } else {
                 alert("Login failed");
+                return;
             }
         });
     }
@@ -27,7 +41,10 @@
     <form on:submit|preventDefault={handleSubmit}>
         <input class="apinput-text" type="text" id="username" placeholder="Your email address" bind:value={username} />
         <input class="apinput-text" type="password" placeholder="Your password" id="password" bind:value={password} />
-        <button class="apbtn-primary" type="submit">Login</button>
+        <div class="flex flex-row gap-2">
+            <button class="apbtn-primary flex-grow w-1" type="submit">Login as Manager</button>
+            <button class="apbtn-primary flex-grow w-1" type="submit" on:click={() => loginMode = "photographer"}>Login as Photographer</button>
+        </div>
     </form>
 </div>
 

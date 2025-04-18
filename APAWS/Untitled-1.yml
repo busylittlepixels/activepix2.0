@@ -1,0 +1,75 @@
+Activepix rewrite?
+- Key features:
+- - Deployment dashboard
+- - Multiple regions supported, or stick with EI?
+- - - Are we going to be doing lots of races in india / US?
+- - Detection systems
+- - - QR Code
+- - - OpenAI
+- - Split frontend + (admin + cms) into seperate repos for easier deployment.
+- - Non-technical documention!!!!
+- - - How to deploy
+- - - How to use
+- - Ticket sales?
+- - - Optional stack that can be enabled to provide ticket selling flow based on stripe.
+- - - - In this case, data would be stored PER EVENT INSTANCE
+- - - Centralised stack that can be enabled to provide ticket selling flow based on stripe.
+- - - - In this case, data would be stored in a centralised database and be found at tickets.activepix.com
+- - - - - This would allow for a centralised ticket selling platform that could be used for multiple events,
+- - - - - and potentially allow user accounts to sign up for multiple different events.
+- - Auth system?
+- - - If we go the ticket sales route, we could also fragment out the auth system to be a centralised auth system.
+- - - eg auth.activepix.com.
+- - - - All services, including Event Instances, would then be able to use this auth system, rather than having payload auth per service.
+- - Lambda / API tidy up
+- - - Currently, we have a lot of lambda functions that are a bit all over the place.
+- - - We should look at tidying these up and exposing a CRUD API for Participants, Participant Media and Event Instances.
+- - - - This would allow for a more structured approach to the backend, and allow for easier deployment of new services.
+- - - The lambda for processing media should be independent of the S3 bucket events
+- - - - This will allow for re-processing of media to be done simply, and the S3 event can be glued
+- - - - to the lambda function in the same way that the API Gateway is.
+- - Centralized processing?
+- - - Currently, the media processing is done in the same stack as the event instance.
+- - - We could move this so all processing is done in a centralised stack with read/write access to the event instance buckets and DBs
+- - - This would make it easier to dedicate resources to processing, as they won't have to be split per event instance, and instead will just process
+- - - a queue of MediaProcessingRequests containing an ingress key & the event instance ID.
+- - Statistics?
+- - - Currently we're using Matomo for frontend statistics.
+- - - Would it be better to have statistics tracked by ourselves into an EventInstanceStatistics table?
+- - - Key Stats:
+- - - - Photos uploaded
+- - - - Photos processed
+- - - - Gallery view counts - Count of how many times each participant's gallery has been viewed.
+- - - - Gallery share counts - How many times the gallery has been shared (by any method)
+- - - - Gallery download counts - How many times the gallery has been downloaded.
+- - - - PhotoHasBeenFullsized - Count of how many times a photo thumbnail has been clicked to view fullsize.
+- - - - PhotoHasBeenDownloaded - Count of how many times a photo has been downloaded.
+
+Ideally these will:
+- Speed up deployment time (by splitting Event Instances into multiple stacks that can be deployed in parallel)
+- 
+
+
+Loose stack map:
+- AP-CORE
+- -? ROUTE53: auth.activepix.com
+- - ROUTE53: admin.activepix.com
+- - CONTAINER: DeploymentDashboard
+- - CONTAINER: DeploymentWorker
+- APEI-CORE
+- - BUCKET: IngressMedia
+- - BUCKET: ProcessedPhotos
+- - BUCKET: ProcessedVideos
+- - DYNAMODB: Participants
+- - DYNAMODB: ParticipantMedia
+- - DYNAMODB: EventInstanceStatistics
+- APEI-PHOTOPROCESSING // Possibly to be moved to AP-CORE-PROCESSING
+- - SQS: PhotoProcessingQueue
+- - CONTAINER: PhotoProcessor
+- - DYNAMODB: PhotoProcessorStatistics
+- APEI-GALLERY
+- - ROUTE53: <event>.events.activepix.com
+- - CONTAINER: Gallery
+- APEI-ADMIN
+- - ROUTE53: admin.<event>.events.activepix.com
+- - CONTAINER: Admin

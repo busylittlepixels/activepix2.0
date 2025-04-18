@@ -3,11 +3,15 @@
     import ModalWrapper from "./utils/ModalWrapper.svelte";
     import * as ModalManager from "$lib/ModalManager";
 	import { Endpoints } from "$lib/Endpoints";
+	import { onMount } from "svelte";
 
     export let id:number;
     export let type:ModalManager.ModalTypes
-    export let data:{ingressKey: string, thumbnail: string, fullsize: string, participantCodes: number[]};
-
+    export let data:{ingressKey: string, thumbnail: string, fullsize: string, participantCodes: number[],
+        navigation: {
+            next:(ingressKey:string, modalID:number)=>Promise<void>,
+        }
+    };
     let participantCode:number|null = null;
 
 
@@ -30,9 +34,9 @@
         })
     }
 
-    function addCode(code:number){
+    async function addCode(code:number){
         data.participantCodes = [...data.participantCodes, code]
-        fetch(Endpoints.galleryData.manageMedia, {
+        await fetch(Endpoints.galleryData.manageMedia, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -42,7 +46,22 @@
                 participantCodes: data.participantCodes
             })
         })
+        participantCode = null
     }
+
+    onMount(() => {
+        //Add keyboard events for next and previous
+        const nextListener = (e:any) => {
+            if(e.key === 'ArrowRight'){
+                data.navigation.next(data.ingressKey, id)
+            }
+        }
+        window.addEventListener('keydown', nextListener)
+
+        return () => {
+            window.removeEventListener('keydown', nextListener)
+        }
+    })
 </script>
 <ModalWrapper onBackgroundClick={closeThisModal}>
     <h1>{data.ingressKey}</h1>
@@ -65,14 +84,9 @@
             }
         }}>
             <input type="number" placeholder="Participant Code" bind:value={participantCode}/>
-            <button on:click={() => {
-                if(participantCode !== null){
-                    addCode(participantCode)
-                } else {
-                    alert('Please enter a participant code')
-                }
-            }}>Add</button>
+            <button type="submit">Add</button>
         </form>
+        <button class="btn" on:click={()=>{data.navigation.next(data.ingressKey, id)}}>Next</button>
     </div>
 </ModalWrapper>
 

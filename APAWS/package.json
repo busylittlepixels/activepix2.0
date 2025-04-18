@@ -20,20 +20,24 @@
     "deployROC23": "npm run build && cdk deploy APAWS-EI-ROC23 --profile=rrharry-aa -vv --require-approval never",
     "deployNAAS10K": "npm run build && cdk deploy APAWS-EI-NAAS10K --profile=rrharry-aa -vv --require-approval never",
     "deployNAAS10KLIVE": "npm run build && cdk deploy APAWS-EI-NAAS10KLIVE --profile=rrharry-aa -vv --require-approval never",
-    "deployPOLISHIND24": "npm run build && cdk deploy APAWS-EI-POLISHIND24 --profile=rrharry-aa -vv --require-approval never"
+    "deployPOLISHIND24": "npm run build && cdk deploy APAWS-EI-POLISHIND24 --profile=rrharry-aa -vv --require-approval never",
+    "deployGRT24": "npm run build && cdk deploy APAWS-EI-GRT24 --profile=rrharry-aa -vv --require-approval never",
+    "deployKOLKATAKIDDATHON": "npm run build && cdk deploy APAWS-EI-KOLKATAKIDDATHON --profile=rrharry-aa -vv --require-approval never"
+    
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "20.14.9",
+    "aws-cdk": "2.150.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.5",
-    "aws-cdk": "2.150.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.5.3"
   },
   "dependencies": {
     "aws-cdk-lib": "2.150.0",
     "constructs": "^10.0.0",
+    "dotenv": "^16.4.5",
     "source-map-support": "^0.5.21"
   }
 }

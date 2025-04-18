@@ -15,6 +15,8 @@ import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { LBSveltekit } from './Constructs/LBSveltekit';
+import * as dotenv from 'dotenv';
+dotenv.config();
 // import { EventInstanceProcessingStack } from './eiProcessing-stack';
 import path = require('path');
 export interface EventInstanceStackProps extends cdk.StackProps {
@@ -73,6 +75,20 @@ export class EventInstanceStack extends cdk.Stack {
       principals: [new iam.ArnPrincipal('*')],
     }));
 
+    const ZipDownloadsBucket = new s3.Bucket(this, namepfx + 'ZipDownloadsBucket', {
+      bucketName: namepfx.toLowerCase() + 'zip-downloads-bucket',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      publicReadAccess: true,  // Allow public read access at bucket creation
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,  // Optionally configure block public access settings
+    });
+
+    ZipDownloadsBucket.addToResourcePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['s3:GetObject'],
+      resources: [`${ZipDownloadsBucket.bucketArn}/*`],
+      principals: [new iam.ArnPrincipal('*')],
+    }));
 
     //Create DynamoDB tables
     const ProcessedImageMetadataTable = new ddb.Table(this, namepfx + 'ProcessedImageMetadataTable', {
@@ -110,9 +126,37 @@ export class EventInstanceStack extends cdk.Stack {
         `cms.${props.subdomain}.races.activepix.com`,
         `admin.${props.subdomain}.races.activepix.com`,
         `ingress.${props.subdomain}.races.activepix.com`,
+        `api.${props.subdomain}.races.activepix.com`,
       ],
       validation: acm.CertificateValidation.fromDns(hostedZone),
     });
+
+    //Create LDownloadGalleryZip Lambda function
+    const LDownloadGalleryZip = new lambda.Function(this, namepfx + 'LDownloadGalleryZip', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LDownloadGalleryZip'),
+      environment: {
+        INGRESS_BUCKET: MediaIngressBucket.bucketName,
+        PROCESSED_BUCKET: ProcessedBucket.bucketName,
+        PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+        ZIP_DOWNLOADS_BUCKET: ZipDownloadsBucket.bucketName,
+      },
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 1024,
+    });
+
+    //Grant the Lambda function read on the ParticipantMetadataTable
+    //Grant the Lambda function read on the ProcessedImageMetadataTable
+    //Grant the Lambda function write on the ZipDownloadsBucket
+    //Grant the Lambda function read on the ProcessedBucket
+    //Grant the Lambda function read on the MediaIngressBucket
+    ParticipantMetadataTable.grantReadData(LDownloadGalleryZip);
+    ProcessedImageMetadataTable.grantReadData(LDownloadGalleryZip);
+    ZipDownloadsBucket.grantWrite(LDownloadGalleryZip);
+    ProcessedBucket.grantRead(LDownloadGalleryZip);
+    MediaIngressBucket.grantRead(LDownloadGalleryZip);
     
     //Create LGetMediaForParticipant Lambda function
     const LGetMediaForParticipant = new lambda.Function(this, namepfx + 'LGetMediaForParticipant', {
@@ -153,6 +197,26 @@ export class EventInstanceStack extends cdk.Stack {
     ProcessedImageMetadataTable.grantReadWriteData(LManageMedia);
     ParticipantMetadataTable.grantReadWriteData(LManageMedia);
 
+
+    const LRemoveMedia = new lambda.Function(this, namepfx + 'LRemoveMedias', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LRemoveMedias'),
+      environment: {
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+        PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        PROCESSED_BUCKET: ProcessedBucket.bucketName,
+        INGRESS_BUCKET: MediaIngressBucket.bucketName,
+      },
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 256,
+    });
+
+    // Grant the Lambda function necessary permissions
+    ProcessedImageMetadataTable.grantReadWriteData(LRemoveMedia);
+    ParticipantMetadataTable.grantReadWriteData(LRemoveMedia);
+    ProcessedBucket.grantReadWrite(LRemoveMedia);
+    MediaIngressBucket.grantReadWrite(LRemoveMedia);
     
 
     //Create an API Gateway for the LGetMediaForParticipant Lambda function
@@ -161,6 +225,25 @@ export class EventInstanceStack extends cdk.Stack {
       proxy: false,
     });
 
+    const apiDomain = new cdk.aws_apigateway.DomainName(this, namepfx + 'ApiCustomDomain', {
+      domainName: `api.${props.subdomain}.races.activepix.com`,
+      certificate: certificate,  // Use the existing certificate
+      endpointType: cdk.aws_apigateway.EndpointType.REGIONAL,  // Set endpoint type as Regional
+    });
+    
+    // Map the API Gateway stage to the custom domain
+    const apiMapping = new cdk.aws_apigateway.BasePathMapping(this, namepfx + 'ApiMapping', {
+      domainName: apiDomain,
+      restApi: api,  // Use the existing API
+      stage: api.deploymentStage,
+    });
+
+
+    const apiAliasRecord = new route53.ARecord(this, namepfx + 'ApiAliasRecord', {
+      zone: hostedZone,
+      recordName: `api.${props.subdomain}`,
+      target: route53.RecordTarget.fromAlias(new route53Targets.ApiGatewayDomain(apiDomain)),
+    });
     //Create a resource for the API Gateway
     const participant = api.root.addResource('forParticipant');
     participant.addMethod('POST');
@@ -195,6 +278,38 @@ export class EventInstanceStack extends cdk.Stack {
         },
       }]
     });
+
+    //Create resource for the LRemoveMedia Lambda function
+    const removeMediaResource = api.root.addResource('removeMedia');
+
+    // Add DELETE method to the resource
+    removeMediaResource.addMethod('DELETE', new cdk.aws_apigateway.LambdaIntegration(LRemoveMedia));  // DELETE method for removing media
+    // Optionally, add CORS support if required
+    removeMediaResource.addMethod('OPTIONS', new cdk.aws_apigateway.MockIntegration({
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,DELETE'",
+        },
+      }],
+      passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
+      requestTemplates: {
+        'application/json': '{"statusCode": 200}'
+      },
+    }), {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Origin': true,
+          'method.response.header.Access-Control-Allow-Methods': true,
+        },
+      }]
+    });
+
+    
 
 
     const LDebug = new lambda.Function(this, namepfx + 'LDebug', {
@@ -264,6 +379,15 @@ export class EventInstanceStack extends cdk.Stack {
       }]
     });
 
+    //Create an API Gateway for the LDownloadGalleryZip Lambda function
+    const downloadGalleryZip = api.root.addResource('downloadGalleryZip');
+
+    // Add GET method to the resource
+    downloadGalleryZip.addMethod('GET', new cdk.aws_apigateway.LambdaIntegration(LDownloadGalleryZip));  // GET method for downloading gallery zip
+
+    // Optionally, add CORS support if required
+    
+
 
     // Define IAM Role for PayloadCMS ECS Task
     const payloadCMSTaskRole = new iam.Role(this, namepfx + 'ECSTaskRole', {
@@ -295,7 +419,7 @@ export class EventInstanceStack extends cdk.Stack {
         "PUBLIC_ADMIN_DOMAIN": `admin.${props.subdomain}.${hostedZone.zoneName}`,
         "PUBLIC_CMS_DOMAIN": `cms.${props.subdomain}.${hostedZone.zoneName}`,
         "PUBLIC_INGRESS_DOMAIN": MediaIngressBucket.bucketDomainName,
-        "PUBLIC_API_DOMAIN": api.url,
+        "PUBLIC_API_DOMAIN": `api.${props.subdomain}.${hostedZone.zoneName}`,
       },
       certificate
     });
@@ -306,6 +430,7 @@ export class EventInstanceStack extends cdk.Stack {
       recordName: `cms.${props.subdomain}`,
       target: route53.RecordTarget.fromAlias(new route53Targets.LoadBalancerTarget(this.EventInstanceCMS.loadBalancer)),
     });
+    
 
     //Create the gallery docker image asset from the ./eventInstance/galleryContainerImage directory
     const galleryImage = new ecrAssets.DockerImageAsset(this, 'GalleryImage', {
@@ -328,7 +453,7 @@ export class EventInstanceStack extends cdk.Stack {
         "PUBLIC_ADMIN_DOMAIN": `admin.${props.subdomain}.${hostedZone.zoneName}`,
         "PUBLIC_CMS_DOMAIN": `cms.${props.subdomain}.${hostedZone.zoneName}`,
         "PUBLIC_INGRESS_DOMAIN": MediaIngressBucket.bucketDomainName,
-        "PUBLIC_API_DOMAIN": api.url,
+        "PUBLIC_API_DOMAIN": `api.${props.subdomain}.${hostedZone.zoneName}`,
       }
     });
 
@@ -360,7 +485,7 @@ export class EventInstanceStack extends cdk.Stack {
         "PUBLIC_ADMIN_DOMAIN": `admin.${props.subdomain}.${hostedZone.zoneName}`,
         "PUBLIC_CMS_DOMAIN": `cms.${props.subdomain}.${hostedZone.zoneName}`,
         "PUBLIC_INGRESS_DOMAIN": MediaIngressBucket.bucketDomainName,
-        "PUBLIC_API_DOMAIN": api.url,
+        "PUBLIC_API_DOMAIN": `api.${props.subdomain}.${hostedZone.zoneName}`,
       }
     });
 
@@ -449,7 +574,7 @@ export class EventInstanceStack extends cdk.Stack {
 
     //Output the URL of the Participant API
     new cdk.CfnOutput(this, namepfx + 'ParticipantAPIURL', {
-      value: api.url,
+      value: `api.${props.subdomain}.${hostedZone.zoneName}`,
       description: 'The URL of the Participant API',
     });
 
@@ -542,6 +667,8 @@ export class EventInstanceStack extends cdk.Stack {
             METADATA_TABLE: ProcessedImageMetadataTable.tableName,
             PARTICIPANT_TABLE: ParticipantMetadataTable.tableName,
             SQS_QUEUE_URL: imageProcessingQueue.queueUrl,
+            OPENAI_API_KEY: process.env.OPENAI_API_KEY || 'NOKEYPROVIDED',
+            CMS_ENDPOINT: `https://cms.${props.subdomain}.${hostedZone.zoneName}`,
         },
         // healthCheck: {
         //     command: ['CMD-SHELL', 'pgrep -f "node" || exit 1'],
@@ -572,7 +699,7 @@ export class EventInstanceStack extends cdk.Stack {
     // Auto scaling based on CPU utilization
     const scaling = service.autoScaleTaskCount({
         minCapacity: 1,
-        maxCapacity: 60,
+        maxCapacity: 10,
     });
 
     scaling.scaleOnCpuUtilization('ProcessorServiceCpuScaling', {
@@ -581,5 +708,38 @@ export class EventInstanceStack extends cdk.Stack {
         scaleInCooldown: cdk.Duration.seconds(30),
         
     })
-  }
+
+    const LReprocessAll = new lambda.Function(this, namepfx + 'LReprocessAll', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset('./lib/eventInstance/Lambdas/LReprocessAll'),
+      environment: {
+        PROCESSED_BUCKET: ProcessedBucket.bucketName,
+        PARTICIPANT_METADATA_TABLE: ParticipantMetadataTable.tableName,
+        IMAGE_METADATA_TABLE: ProcessedImageMetadataTable.tableName,
+        INGRESS_BUCKET: MediaIngressBucket.bucketName,
+        IMAGE_PROCESSING_QUEUE: imageProcessingQueue.queueUrl,
+      },
+      timeout: cdk.Duration.seconds(120),
+      memorySize: 512,
+
+    });
+
+    //Add api endpoint for reprocessing
+    const reprocessResource = api.root.addResource('reprocess');
+    // Add GET method to the resource
+    reprocessResource.addMethod('GET', new cdk.aws_apigateway.LambdaIntegration(LReprocessAll));  // GET method for reprocessing media
+
+    //Grant the Lambda function read on the ParticipantMetadataTable
+    //Grant the Lambda function read on the ProcessedImageMetadataTable
+    //Grant the Lambda function write on the imageProcessingQueue
+    //Grant the Lambda function read on the ProcessedBucket
+    //Grant the Lambda function read on the MediaIngressBucket
+    ParticipantMetadataTable.grantReadData(LReprocessAll);
+    ProcessedImageMetadataTable.grantReadData(LReprocessAll);
+    imageProcessingQueue.grantSendMessages(LReprocessAll);
+    ProcessedBucket.grantRead(LReprocessAll);
+    MediaIngressBucket.grantRead(LReprocessAll);
+
+  }  
 }

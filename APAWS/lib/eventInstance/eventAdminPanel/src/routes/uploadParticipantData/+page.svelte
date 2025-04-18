@@ -10,7 +10,7 @@
 </script>
 <div class="flex flex-col items-center justify-center h-full">
     <h1 class="text-3xl mb-2">Upload your participant data</h1>
-    <p class="mb-1">- some info about participant CSV format here -</p>
+    <!-- <p class="mb-1">- some info about participant CSV format here -</p> -->
 	<div class="dividerLine mb-4"></div>
     <UpdateParticipantData></UpdateParticipantData>
 </div>

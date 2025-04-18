@@ -3,3 +3,4 @@ node_modules
 cdk.out
 cdk.out.old
 opencv_aws_lambda/
+.env

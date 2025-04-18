@@ -63,9 +63,17 @@
         /* min-height: 400px; */
         position: relative;
         height: 100%;
-        
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
-
+    @media (max-width: 768px) {
+        .modal-inner {
+            min-width: 90%;
+            max-width: 90%;
+            height: auto;
+        }
+    }
     .modalTransparent {
 
     }

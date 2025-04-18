@@ -32,7 +32,10 @@ def detect_markers(image_path:str, dictionary):
         numbers = []
         image = cv2.imread(image_path)
 
-        parameters =  cv2.aruco.DetectorParameters()
+        # parameters =  cv2.aruco.DetectorParameters({
+        #     "cornerRefinementMethod": cv2.aruco.CORNER_REFINE_SUBPIX,
+        # })
+        parameters = cv2.aruco.DetectorParameters()
         detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
         corners, ids, rejectedImgPoints = detector.detectMarkers(image)

@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-batch": "^3.624.0",
     "aws-sdk": "^2.1670.0",
+    "openai": "^4.71.1",
     "sharp": "^0.33.4"
   }
 }

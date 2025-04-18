@@ -1,6 +1,10 @@
 import { env } from '$env/dynamic/public'
 
 let galleryDataBaseUrl: string = env.PUBLIC_API_DOMAIN//+'/prod';
+if (!galleryDataBaseUrl.startsWith('http')) {
+    galleryDataBaseUrl = 'https://' + galleryDataBaseUrl;
+}
+
 
 let cmsBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN + '/api';
 let cmsFileBaseURL: string = "https://"+env.PUBLIC_CMS_DOMAIN;
@@ -19,6 +23,7 @@ export const Endpoints = {
         baseUrl: galleryDataBaseUrl,
         forParticipant: galleryDataBaseUrl + '/forParticipant',
         manageMedia: galleryDataBaseUrl + '/manageMedia',
+        deleteMedia: galleryDataBaseUrl + '/removeMedia',
     },
     cms: {
         base: cmsBaseURL,

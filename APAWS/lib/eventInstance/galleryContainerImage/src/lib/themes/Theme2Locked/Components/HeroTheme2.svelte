@@ -20,11 +20,11 @@
                             <img src="{Endpoints.cms.media.files}{galleryData.galleryConfig.logo?.url}" alt="logo" style="max-width: 130px; height: auto;"/>
                         </div>
                     {/if}
-                    <p class="text-4xl"><span class="text-yellow-400">{galleryData.galleryConfig.title}
+                    <p class="text-4xl text-yellow-400 text-center">{galleryData.galleryConfig.title}
                         {#if (galleryData.participantData)}
                             - {galleryData.participantData.firstName} {galleryData.participantData.lastName}
                         {/if}
-                    </span></p>
+                    </p>
                     <p class="text-2xl"><span class="text-yellow-400">{MiscHelpers.niceDate(galleryData.galleryConfig.date)}</span></p>
                     <div class="flex flex-row items-center">
                         <!-- <div class="icon-sizing">
