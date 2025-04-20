@@ -22,7 +22,8 @@
     "deployNAAS10KLIVE": "npm run build && cdk deploy APAWS-EI-NAAS10KLIVE --profile=rrharry-aa -vv --require-approval never",
     "deployPOLISHIND24": "npm run build && cdk deploy APAWS-EI-POLISHIND24 --profile=rrharry-aa -vv --require-approval never",
     "deployGRT24": "npm run build && cdk deploy APAWS-EI-GRT24 --profile=rrharry-aa -vv --require-approval never",
-    "deployKOLKATAKIDDATHON": "npm run build && cdk deploy APAWS-EI-KOLKATAKIDDATHON --profile=rrharry-aa -vv --require-approval never"
+    "deployKOLKATAKIDDATHON": "npm run build && cdk deploy APAWS-EI-KOLKATAKIDDATHON --profile=rrharry-aa -vv --require-approval never",
+    "deployNEWPORT": "npm run build && cdk deploy APAWS-EI-NEWPORT-MARATHON --profile=rrharry-aa -vv --require-approval never"
     
   },
   "devDependencies": {

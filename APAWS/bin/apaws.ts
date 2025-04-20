@@ -165,3 +165,13 @@ new EventInstanceStack(app, 'APAWS-EI-TEST4', {
 //     "APAWSEI-LIVE": "true"
 //   }
 // });
+
+new EventInstanceStack(app, 'APAWS-EI-NEWPORT-MARATHON', {
+  name: 'APAWSEI-NEWPORT-MARATHON',
+  subdomain: 'newport-marathon',
+  env: env,
+  tags: {
+    APAWSEI: 'LIVE',
+    "APAWSEI-LIVE": "true"
+  }
+});

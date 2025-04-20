@@ -389,9 +389,9 @@ export async function getParticipantCodes(ctx: GetParticipantCodesContext): Prom
     //     'AndriiCodeDetector': new AndriiCodeDetector(ctx.workspacePath),
     //     'GPT4ODetector': new GPT4ODetector(ctx.workspacePath),
     // }
-    const detector = new AndriiCodeDetector(ctx.workspacePath)
+    // const detector = new AndriiCodeDetector(ctx.workspacePath)
     // const codeMap = await detector.detectCodes()
-    // const detector = new GPT4ODetector(ctx.workspacePath)
+    const detector = new GPT4ODetector(ctx.workspacePath)
     const codeMap = await detector.detectCodes()
     //TODO: Change for paralell processing
     try {

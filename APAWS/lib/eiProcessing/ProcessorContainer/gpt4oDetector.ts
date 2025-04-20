@@ -38,7 +38,7 @@ export class GPT4ODetector extends CodeDetector {
                       {
                         "role": "user",
                         "content": [
-                          {"type": "text", "text": "Your job is to detect the bib numbers in the provided image, returning them as a comma-separated list. Do not include any other information."},
+                          {"type": "text", "text": "Your job is to detect the bib numbers in the provided image, returning them as a comma-separated list. Do not include any other information. Make an attempt to guess partially obscured race bibs, but ignore the bib if it's unreadable or a full digit is obscured."},
                           {
                             "type": "image_url",
                             "image_url": {
